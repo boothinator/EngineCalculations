@@ -23,14 +23,55 @@
 
 char message[MAX_MESSAGE_LEN];
 
+constexpr float ticksPerSecond = 2000000;
+
 void setUp(void) {
-  configure
+  configureEngineSpeedCalculations(ticksPerSecond);
+  configureInjectionLengthCalculation(ticksPerSecond, 265);
+  configureLoadCalculation(8.3, 8.5);
 }
 
 void tearDown(void) {
 // clean stuff up here
 }
 
+float getCrankSpeedDegreesPerTick(float rpm)
+{
+  return rpm
+    * ( 1.0 / 60 ) /* min / s */
+    * ( 1.0 / ticksPerSecond) /* s / tick */
+    * 360; /* degrees / rev */
+}
+
+#ifdef __AVR_ATmega2560__
+
+uint16_t start, end;
+
+#define TIME_START {start = TCNT1;}
+#define TIME_END {end = TCNT1;}
+
+#else
+
+#define TIME_START
+#define TIME_END
+
+#endif
+
+void test_calculateRpm()
+{
+  float expected = 1000.0;
+  float crankSpeedDegreesPerTick = getCrankSpeedDegreesPerTick(expected);
+
+  TIME_START
+  float actual = calculateRpm(crankSpeedDegreesPerTick);
+  TIME_END
+
+  TEST_ASSERT_EQUAL_UINT16(expected, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_EQUAL(168, end - start);
+#endif
+}
 
 void setup() {
   // NOTE!!! Wait for >2 secs
@@ -39,10 +80,14 @@ void setup() {
 
   UNITY_BEGIN();    // IMPORTANT LINE!
 
+#ifdef __AVR_ATmega2560__
   // Set Timer 1 to run in normal counting mode (no PWM, rollover to 0)
   TCCR1A = 0;
   // Set Timer 1 to use no prescaling (run in sync with system clock)
   TCCR1B = 1;
+#endif
+
+  RUN_TEST(test_calculateRpm);
 
   UNITY_END(); // stop unit testing
 }
