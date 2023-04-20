@@ -19,10 +19,12 @@
 
 #include <math.h>
 
+#include <Arduino.h>
+
 namespace
 {
 
-float _injectionLengthMultiplierRevSecondPerMinRadG = 0;
+float injectionLengthMultiplierRevSecondPerMinRadG = 0;
 
 } // namespace
 
@@ -32,13 +34,12 @@ void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorF
   //   injectionCc = (airflow * injectionCcMultiplier) / (rpm * targetAfr)
   //   injLengthTicks = injectionCc * injectorFlowTicksPerCc
 
-  // approx value: 452,830
   float injectorFlowTicksPerCc =
-    ticksPerSecond
+    (float)ticksPerSecond
     * ( 60.0 / 1.0 ) /* seconds / minute */
     * ( 1.0 / injectorFlowCcPerMin );
 
-  _injectionLengthMultiplierRevSecondPerMinRadG = /* rev s / [min rad g] */
+  injectionLengthMultiplierRevSecondPerMinRadG = /* rev s / [min rad g] */
     injectorFlowTicksPerCc
     * ( 1.0 / ( M_PI ) ) /* rev / radian */
     * ( 1.0 / fuelDensityGramPerCc);
@@ -50,7 +51,12 @@ ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm
     airflowGramsPerSecond
     * inverseRpm /* minutes / rev */
     * targetFuelAirRatio
-    * _injectionLengthMultiplierRevSecondPerMinRadG; /* rev s / [min rad g] */
+    * injectionLengthMultiplierRevSecondPerMinRadG; /* rev s / [min rad g] */
 
-  return static_cast<ticks_t>(injLengthTicks);
+  Serial.println(injectionLengthMultiplierRevSecondPerMinRadG, 10);
+  Serial.println(inverseRpm, 10);
+  Serial.println(targetFuelAirRatio, 10);
+  Serial.println(injLengthTicks, 10);
+
+  return static_cast<ticks_t>(injLengthTicks + 0.5);
 }

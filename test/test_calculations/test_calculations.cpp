@@ -95,6 +95,25 @@ void test_getTicksFromAngle()
 #endif
 }
 
+void test_calculateInjectionLength()
+{
+  ticks_t expected = 11506;
+  float rpm = 4000.0; 
+  volatile float targetFuelAirRatio = 1.0 / 14.7;
+  volatile float inverseRpm = 1.0 / rpm;
+  volatile float airflowGramsPerSecond = 59.0;
+
+  TIME_START
+  volatile ticks_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, inverseRpm, airflowGramsPerSecond);
+  TIME_END
+
+  TEST_ASSERT_EQUAL_UINT16(expected, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_EQUAL(181, TIME_DIFF);
+#endif
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -111,6 +130,7 @@ void setup() {
 
   RUN_TEST(test_calculateRpm);
   RUN_TEST(test_getTicksFromAngle);
+  RUN_TEST(test_calculateInjectionLength);
 
   UNITY_END(); // stop unit testing
 }
