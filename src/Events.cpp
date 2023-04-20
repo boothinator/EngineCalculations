@@ -14,10 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef ENGINE_CALCULATIONS_EVENTS_H_
-#define ENGINE_CALCULATIONS_EVENTS_H_
-
-#pragma once
 
 #include "Types.h"
 
@@ -47,5 +43,3 @@ angle_t getAngleTdcHalfCycle(int cylinder, uint8_t *firingOrder, uint8_t cylinde
 
   return angle;
 }
-
-#endif
