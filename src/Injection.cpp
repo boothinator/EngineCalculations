@@ -24,7 +24,7 @@
 namespace
 {
 
-float injectionLengthMultiplierRevSecondPerMinRadG = 0;
+float injectionLengthMultiplierRevTicksSecondPerMinRadG = 0;
 
 } // namespace
 
@@ -35,13 +35,13 @@ void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorF
   //   injLengthTicks = injectionCc * injectorFlowTicksPerCc
 
   float injectorFlowTicksPerCc =
-    (float)ticksPerSecond
+    static_cast<float>(ticksPerSecond)
     * ( 60.0 / 1.0 ) /* seconds / minute */
     * ( 1.0 / injectorFlowCcPerMin );
 
-  injectionLengthMultiplierRevSecondPerMinRadG = /* rev s / [min rad g] */
+  injectionLengthMultiplierRevTicksSecondPerMinRadG = /* rev ticks s / [min g] */
     injectorFlowTicksPerCc
-    * ( 1.0 / ( M_PI ) ) /* rev / radian */
+    * 30.0
     * ( 1.0 / fuelDensityGramPerCc);
 }
 
@@ -51,12 +51,7 @@ ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm
     airflowGramsPerSecond
     * inverseRpm /* minutes / rev */
     * targetFuelAirRatio
-    * injectionLengthMultiplierRevSecondPerMinRadG; /* rev s / [min rad g] */
-
-  Serial.println(injectionLengthMultiplierRevSecondPerMinRadG, 10);
-  Serial.println(inverseRpm, 10);
-  Serial.println(targetFuelAirRatio, 10);
-  Serial.println(injLengthTicks, 10);
+    * injectionLengthMultiplierRevTicksSecondPerMinRadG; /* rev ticks s / [min g] */
 
   return static_cast<ticks_t>(injLengthTicks + 0.5);
 }

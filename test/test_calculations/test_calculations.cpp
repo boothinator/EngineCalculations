@@ -27,7 +27,7 @@ constexpr float ticksPerSecond = 2000000;
 
 void setUp(void) {
   configureEngineSpeedCalculations(ticksPerSecond);
-  configureInjectionLengthCalculation(ticksPerSecond, 265);
+  configureInjectionLengthCalculation(ticksPerSecond, 265.0);
   configureLoadCalculation(8.3, 8.5);
 }
 
@@ -97,7 +97,7 @@ void test_getTicksFromAngle()
 
 void test_calculateInjectionLength()
 {
-  ticks_t expected = 11506;
+  ticks_t expected = 18054;
   float rpm = 4000.0; 
   volatile float targetFuelAirRatio = 1.0 / 14.7;
   volatile float inverseRpm = 1.0 / rpm;
@@ -110,7 +110,7 @@ void test_calculateInjectionLength()
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(181, TIME_DIFF);
+  TEST_ASSERT_EQUAL(690, TIME_DIFF);
 #endif
 }
 
