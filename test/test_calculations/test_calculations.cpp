@@ -49,11 +49,13 @@ uint16_t start, end;
 
 #define TIME_START {start = TCNT1;}
 #define TIME_END {end = TCNT1;}
+#define TIME_DIFF (end - start)
 
 #else
 
 #define TIME_START
 #define TIME_END
+#define TIME_DIFF (0)
 
 #endif
 
@@ -69,7 +71,7 @@ void test_calculateRpm()
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(181, end - start);
+  TEST_ASSERT_EQUAL(181, TIME_DIFF);
 #endif
 }
 
@@ -89,7 +91,7 @@ void test_getTicksFromAngle()
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(629, end - start);
+  TEST_ASSERT_EQUAL(629, TIME_DIFF);
 #endif
 }
 
