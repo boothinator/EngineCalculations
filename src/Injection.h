@@ -21,7 +21,8 @@
 
 #include "Types.h"
 
-void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorFlowCcPerMin, float fuelDensityGramPerCc);
+void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorFlowCcPerMin,
+  float fuelDensityGramPerCc = 0.755);
 
 ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm, float airflowGramsPerSecond);
 
