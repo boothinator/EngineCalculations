@@ -24,6 +24,6 @@
 void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorFlowCcPerMin,
   float fuelDensityGramPerCc = 0.755);
 
-ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm, float airflowGramsPerSecond);
+ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float crankSpeedInverseTicksPerDegree, float airflowGramsPerSecond);
 
 #endif

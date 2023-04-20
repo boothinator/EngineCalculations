@@ -79,7 +79,7 @@ void test_getTicksFromAngle()
 {
   ticks_t expected = 3433; // 333.333 ticks/degree
   float rpm = 1000.0; 
-  volatile angle_t crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile angle_t lastCrankEventAngle = 25.0;
   volatile ticks_t lastCrankEventTicks = 100;
   volatile angle_t angle = 35.0;
@@ -100,17 +100,17 @@ void test_calculateInjectionLength()
   ticks_t expected = 18054;
   float rpm = 4000.0; 
   volatile float targetFuelAirRatio = 1.0 / 14.7;
-  volatile float inverseRpm = 1.0 / rpm;
+  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile float airflowGramsPerSecond = 59.0;
 
   TIME_START
-  volatile ticks_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, inverseRpm, airflowGramsPerSecond);
+  volatile ticks_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, crankSpeedInverseTicksPerDegree, airflowGramsPerSecond);
   TIME_END
 
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(690, TIME_DIFF);
+  TEST_ASSERT_EQUAL(678, TIME_DIFF);
 #endif
 }
 
