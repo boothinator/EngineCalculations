@@ -21,6 +21,8 @@
 
 #include "Types.h"
 
+void configureLoadCalculation(float cylinderStrokeCm, float pistonAreaSqCm, float airDensityAtStpGramsPerCc);
+
 float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond);
 
 #endif

@@ -24,6 +24,7 @@
 char message[MAX_MESSAGE_LEN];
 
 void setUp(void) {
+  configure
 }
 
 void tearDown(void) {
