@@ -1,4 +1,4 @@
-// Engine Calculations
+// Events
 // Copyright (C) 2023  Joshua Booth
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,14 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef ENGINE_CALCULATIONS_H_
-#define ENGINE_CALCULATIONS_H_
+#ifndef ENGINE_CALCULATIONS_EVENTS_H_
+#define ENGINE_CALCULATIONS_EVENTS_H_
 
 #pragma once
 
-#include "EngineSpeed.h"
-#include "Injection.h"
-#include "Load.h"
-#include "Events.h"
+#include "Types.h"
+
+angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+{
+  // Assumes TDC angles are evenly spaced
+
+  for (int i = 0; i < cylinderCount; i++)
+  {
+    if (cylinder == firingOrder[i])
+    {
+      return i * (720.0 / cylinderCount);
+    }
+  }
+
+  return static_cast<angle_t>(-1.0);
+}
+
+angle_t getAngleTdcHalfCycle(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+{
+  angle_t angle = getAngleTdc(cylinder, firingOrder, cylinderCount);
+  
+  while (angle >= 360.0)
+  {
+    angle -= 360.0;
+  }
+
+  return angle;
+}
 
 #endif
