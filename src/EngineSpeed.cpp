@@ -66,7 +66,7 @@ ticks_t getTicksFromAngleHalfCycle(angle_t crankSpeedInverseTicksPerDegree, tick
 }
 
 // Angle after cylinder 1 TDC
-angle_t getAngleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks, angle_t cycleAngle)
 {
   ticks_t ticksDiff = ticks - lastCrankEventTicks;
@@ -83,16 +83,16 @@ angle_t getAngleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   return angle;
 }
 
-angle_t getAngleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {
-  return getAngleFloat(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, 720.0);
+  return getAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, 720.0);
 }
 
-angle_t getAngleHalfCycleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+angle_t getAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {
-  return getAngleFloat(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, 360.0);
+  return getAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, 360.0);
 }
 
 

@@ -54,25 +54,3 @@ ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm
 
   return static_cast<ticks_t>(injLengthTicks);
 }
-
-float _loadFractionMultiplier = 0;
-
-void configureLoadCalculation(float cylinderStrokeCm, float pistonAreaSqCm, float airDensityAtStpGramsPerCc)
-{
-
-  // Load = Airflow / Cylinder Max Airflow
-  // Cylinder Max Airflow = Piston max velocity cm/s * Piston area cm^2 * Air density at STP g/cm^3
-
-  float cylinderMaxAirflowG = 
-    (M_PI / 60.0)
-    * cylinderStrokeCm
-    * pistonAreaSqCm
-    * airDensityAtStpGramsPerCc;
-
-  _loadFractionMultiplier = 1.0 / cylinderMaxAirflowG;
-}
-
-float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond)
-{
-  return airflowGramsPerSecond * inverseRpm * _loadFractionMultiplier;
-}

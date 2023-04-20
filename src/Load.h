@@ -21,8 +21,6 @@
 
 #include "Types.h"
 
-ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm, float airflowGramsPerSecond);
-
 float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond);
 
 #endif

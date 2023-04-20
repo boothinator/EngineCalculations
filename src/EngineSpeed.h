@@ -25,30 +25,16 @@ void configureEngineSpeedCalculations(ticks_t ticksPerSecond);
 
 float calculateRpm(float crankSpeedDegreesPerTick);
 
-ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
-  float crankSpeedInverseTicksPerDegree, angle_t angle, angle_t cycleAngle)
-{
-  while (angle < lastCrankEventAngle)
-  {
-    angle += cycleAngle;
-  }
-
-  angle_t angleDiff = angle - lastCrankEventAngle;
-
-  return static_cast<ticks_t>(crankSpeedInverseTicksPerDegree * angleDiff + lastCrankEventTicks);
-}
-
-
 ticks_t getTicksFromAngle(angle_t crankSpeedInverseTicksPerDegree, ticks_t lastCrankEventTicks,
   float crankSpeedInverse, angle_t angle);
 
 ticks_t getTicksFromAngleHalfCycle(angle_t crankSpeedInverseTicksPerDegree, ticks_t lastCrankEventTicks,
   float crankSpeedInverse, angle_t angle);
 
-angle_t getAngleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks);
 
-angle_t getAngleHalfCycleFloat(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+angle_t getAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks);
 
 
