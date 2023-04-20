@@ -14,8 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef ENGINE_SPEED_H_
-#define ENGINE_SPEED_H_
+#ifndef ENGINE_CALCULATIONS_ENGINE_SPEED_H_
+#define ENGINE_CALCULATIONS_ENGINE_SPEED_H_
 
 #pragma once
 
