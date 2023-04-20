@@ -51,18 +51,18 @@ ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
 }
 
 
-ticks_t getTicksFromAngle(angle_t crankSpeedInverseTicksPerDegree, ticks_t lastCrankEventTicks,
-  float crankSpeedInverse, angle_t angle)
+ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+  float crankSpeedInverseTicksPerDegree, angle_t angle)
 {
-  return getTicksFromAngle(crankSpeedInverseTicksPerDegree, lastCrankEventTicks,
-    crankSpeedInverse, angle, 720.0);
+  return getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks,
+    crankSpeedInverseTicksPerDegree, angle, 720.0);
 }
 
-ticks_t getTicksFromAngleHalfCycle(angle_t crankSpeedInverseTicksPerDegree, ticks_t lastCrankEventTicks,
-  float crankSpeedInverse, angle_t angle)
+ticks_t getTicksFromAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
+  float crankSpeedInverseTicksPerDegree, angle_t angle)
 {
-  return getTicksFromAngle(crankSpeedInverseTicksPerDegree, lastCrankEventTicks,
-    crankSpeedInverse, angle, 360.0);
+  return getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks,
+    crankSpeedInverseTicksPerDegree, angle, 360.0);
 }
 
 // Angle after cylinder 1 TDC

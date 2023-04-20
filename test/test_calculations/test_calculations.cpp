@@ -60,16 +60,36 @@ uint16_t start, end;
 void test_calculateRpm()
 {
   float expected = 1000.0;
-  float crankSpeedDegreesPerTick = getCrankSpeedDegreesPerTick(expected);
+  volatile float crankSpeedDegreesPerTick = getCrankSpeedDegreesPerTick(expected);
 
   TIME_START
-  float actual = calculateRpm(crankSpeedDegreesPerTick);
+  volatile float actual = calculateRpm(crankSpeedDegreesPerTick);
   TIME_END
 
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(168, end - start);
+  TEST_ASSERT_EQUAL(181, end - start);
+#endif
+}
+
+void test_getTicksFromAngle()
+{
+  ticks_t expected = 3433; // 333.333 ticks/degree
+  float rpm = 1000.0; 
+  volatile angle_t crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile angle_t lastCrankEventAngle = 25.0;
+  volatile ticks_t lastCrankEventTicks = 100;
+  volatile angle_t angle = 35.0;
+
+  TIME_START
+  volatile ticks_t actual = getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedInverseTicksPerDegree, angle);
+  TIME_END
+
+  TEST_ASSERT_EQUAL_UINT16(expected, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_EQUAL(629, end - start);
 #endif
 }
 
@@ -88,6 +108,7 @@ void setup() {
 #endif
 
   RUN_TEST(test_calculateRpm);
+  RUN_TEST(test_getTicksFromAngle);
 
   UNITY_END(); // stop unit testing
 }
