@@ -1,4 +1,4 @@
-// Config
+// Injection
 // Copyright (C) 2023  Joshua Booth
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,25 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef CONFIG_H_
-#define CONFIG_H_
 
-#pragma once
+#include "Injection.h"
 
-#ifdef TICKS_PER_SECOND
+#include "Config.h"
 
-static constexpr float ticksPerSecond = static_cast<float>(TICKS_PER_SECOND);
+extern float _injectionLengthMultiplierRevSecondPerMinRadG;
 
-#define TICKS_PER_SECOND_ATTR static constexpr
+ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseRpm, float airflowGramsPerSecond)
+{
+  float injLengthTicks =
+    airflowGramsPerSecond
+    * inverseRpm /* minutes / rev */
+    * targetFuelAirRatio
+    * _injectionLengthMultiplierRevSecondPerMinRadG; /* rev s / [min rad g] */
 
-#else // TICKS_PER_SECOND
+  return static_cast<ticks_t>(injLengthTicks);
+}
 
-#define TICKS_PER_SECOND_ATTR
+extern float _loadFractionMultiplier;
 
-extern float ticksPerSecond;
-
-#endif // TICKS_PER_SECOND
-
-void configureEngineCalculations(float injectorFlowCcPerMin, float fuelDensityGramPerCc);
-
-#endif // CONFIG_H_
+float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond)
+{
+  return airflowGramsPerSecond * inverseRpm * _loadFractionMultiplier;
+}

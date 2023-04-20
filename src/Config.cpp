@@ -16,9 +16,44 @@
 
 #include "Config.h"
 
+#include <math.h>
+
 #ifndef TICKS_PER_SECOND
 
 float ticksPerSecond = 0;
 
 #endif
 
+float _injectionLengthMultiplierRevSecondPerMinRadG = 0;
+
+float _loadFractionMultiplier = 0;
+
+void configureEngineCalculations(float injectorFlowCcPerMin, float fuelDensityGramPerCc,
+  float cylinderStrokeCm, float pistonAreaSqCm, float airDensityAtStpGramsPerCc)
+{
+  // Injection length formula:
+  //   injectionCc = (airflow * injectionCcMultiplier) / (rpm * targetAfr)
+  //   injLengthTicks = injectionCc * injectorFlowTicksPerCc
+
+  // approx value: 452,830
+  float injectorFlowTicksPerCc =
+    ticksPerSecond
+    * ( 60.0 / 1.0 ) /* seconds / minute */
+    * ( 1.0 / injectorFlowCcPerMin );
+
+  _injectionLengthMultiplierRevSecondPerMinRadG = /* rev s / [min rad g] */
+    injectorFlowTicksPerCc
+    * ( 1.0 / ( M_PI ) ) /* rev / radian */
+    * ( 1.0 / fuelDensityGramPerCc);
+
+  // Load = Airflow / Cylinder Max Airflow
+  // Cylinder Max Airflow = Piston max velocity cm/s * Piston area cm^2 * Air density at STP g/cm^3
+
+  float cylinderMaxAirflowG = 
+    (M_PI / 60.0)
+    * cylinderStrokeCm
+    * pistonAreaSqCm
+    * airDensityAtStpGramsPerCc;
+
+  _loadFractionMultiplier = 1.0 / cylinderMaxAirflowG;
+}
