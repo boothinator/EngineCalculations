@@ -21,6 +21,8 @@
 
 #include "Types.h"
 
+void configureEngineSpeedCalculations(ticks_t ticksPerSecond);
+
 float calculateRpm(float crankSpeedDegreesPerTick);
 
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,

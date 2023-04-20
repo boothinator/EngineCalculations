@@ -16,16 +16,24 @@
 
 #include "EngineSpeed.h"
 
-#include "Config.h"
+namespace {
 
-TICKS_PER_SECOND_ATTR float calculateRpm(float crankSpeedDegreesPerTick)
+float calculateRpmMultiplierRevTicksPerDegreeMinute = 0;
+
+} // namespace
+
+void configureEngineSpeedCalculations(ticks_t ticksPerSecond)
 {
-  TICKS_PER_SECOND_ATTR float multiplierRevTicksPerDegreeMinute
-    = ticksPerSecond
-      * ( 60.0 / 1.0 ) /* seconds/minute */
-      * ( 1.0 / 360.0 ) /* rev/degree */;
+  calculateRpmMultiplierRevTicksPerDegreeMinute =
+    ticksPerSecond
+    * ( 60.0 / 1.0 ) /* seconds/minute */
+    * ( 1.0 / 360.0 ) /* rev/degree */;
+}
 
-  return multiplierRevTicksPerDegreeMinute * crankSpeedDegreesPerTick;
+float calculateRpm(float crankSpeedDegreesPerTick)
+{
+
+  return calculateRpmMultiplierRevTicksPerDegreeMinute * crankSpeedDegreesPerTick;
 }
 
 
