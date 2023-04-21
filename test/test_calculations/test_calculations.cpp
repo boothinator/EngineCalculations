@@ -28,7 +28,7 @@ constexpr float ticksPerSecond = 2000000;
 void setUp(void) {
   configureEngineSpeedCalculations(ticksPerSecond);
   configureInjectionLengthCalculation(ticksPerSecond, 265.0, 4);
-  configureLoadCalculation(ticksPerSecond, 8.3, 8.5);
+  configureLoadCalculation(ticksPerSecond, 4, 8.3, 8.5);
 }
 
 void tearDown(void) {

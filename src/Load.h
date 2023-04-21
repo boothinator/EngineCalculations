@@ -19,7 +19,7 @@
 
 #pragma once
 
-void configureLoadCalculation(float ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm);
+void configureLoadCalculation(float ticksPerSecond, int cylindersPerAirflowSensor, float cylinderBoreCm, float cylinderStrokeCm);
 
 bool isLoadConfigured();
 
