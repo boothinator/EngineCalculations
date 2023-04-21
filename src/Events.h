@@ -24,7 +24,7 @@
 #include <stdint.h>
 
 template<typename angle_t>
-angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+angle_t getAngleTdc(int cylinder, const uint8_t *firingOrder, uint8_t cylinderCount)
 {
   // Assumes TDC angles are evenly spaced
 
@@ -40,7 +40,7 @@ angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
 }
 
 template<typename angle_t>
-angle_t getAngleTdcHalfCycle(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+angle_t getAngleTdcHalfCycle(int cylinder, const uint8_t *firingOrder, uint8_t cylinderCount)
 {
   angle_t angle = getAngleTdc<angle_t>(cylinder, firingOrder, cylinderCount);
   
