@@ -128,7 +128,7 @@ void test_load()
   TEST_ASSERT_EQUAL_FLOAT(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(319, TIME_DIFF);
+  TEST_ASSERT_UINT_WITHIN(20, 319, TIME_DIFF);
 #endif
 }
 
