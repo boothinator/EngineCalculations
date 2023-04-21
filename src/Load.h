@@ -21,6 +21,8 @@
 
 void configureLoadCalculation(float ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm);
 
+bool isLoadConfigured();
+
 float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
 
 #endif

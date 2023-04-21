@@ -1,4 +1,4 @@
-// Engine Speed
+// Engine Calculations
 // Copyright (C) 2023  Joshua Booth
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,30 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#include "EngineSpeed.h"
+#include "EngineCalculations.h"
 
-namespace {
-
-float calculateRpmMultiplierRevTicksPerDegreeMinute = 0.0;
-
-} // namespace
-
-void configureEngineSpeedCalculations(float ticksPerSecond)
+bool areEngineCalculationsConfigured()
 {
-  calculateRpmMultiplierRevTicksPerDegreeMinute =
-    ticksPerSecond
-    * ( 60.0 / 1.0 ) /* seconds/minute */
-    * ( 1.0 / 360.0 ) /* rev/degree */;
-}
-
-bool isEngineSpeedConfigured()
-{
-  return calculateRpmMultiplierRevTicksPerDegreeMinute > 0.0;
-}
-
-float calculateRpm(float crankSpeedDegreesPerTick)
-{
-
-  return calculateRpmMultiplierRevTicksPerDegreeMinute * crankSpeedDegreesPerTick;
+  return isEngineSpeedConfigured() && isInjectionLengthConfigured() && isLoadConfigured();
 }
 

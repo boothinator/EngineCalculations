@@ -24,4 +24,6 @@
 #include "Load.h"
 #include "Events.h"
 
+bool areEngineCalculationsConfigured();
+
 #endif

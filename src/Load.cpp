@@ -22,7 +22,7 @@
 namespace
 {
 
-float loadFractionMultiplierSDegreePerGTick = 0;
+float loadFractionMultiplierSDegreePerGTick = 0.0;
 
 // NIST STP at 20 C and 101.325 kPa
 constexpr float airDensityAtNtpKgPerCubicMeter = 1.2041;
@@ -50,6 +50,11 @@ void configureLoadCalculation(float ticksPerSecond, float cylinderBoreCm, float 
   loadFractionMultiplierSDegreePerGTick =
     (1.0 / ticksPerSecond) /* seconds / tick */
     * (1.0 / cylinderMaxAirflowGPerDegree); /* degrees / g */
+}
+
+bool isLoadConfigured()
+{
+  return loadFractionMultiplierSDegreePerGTick > 0.0;
 }
 
 float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)

@@ -21,6 +21,8 @@
 
 void configureEngineSpeedCalculations(float ticksPerSecond);
 
+bool isEngineSpeedConfigured();
+
 float calculateRpm(float crankSpeedDegreesPerTick);
 
 template<typename angle_t, typename ticks_t>

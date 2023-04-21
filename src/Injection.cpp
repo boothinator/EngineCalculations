@@ -24,7 +24,7 @@
 namespace
 {
 
-float injectionLengthMultiplierSecDegTicksPerGramStroke = 0;
+float injectionLengthMultiplierSecDegTicksPerGramStroke = 0.0;
 
 } // namespace
 
@@ -38,6 +38,11 @@ void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlo
     ( 1.0 / injectorFlowCcPerMin )
     * 10800
     * ( 1.0 / fuelDensityGramPerCc );
+}
+
+bool isInjectionLengthConfigured()
+{
+  return injectionLengthMultiplierSecDegTicksPerGramStroke > 0.0;
 }
 
 float calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
