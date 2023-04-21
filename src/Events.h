@@ -21,8 +21,35 @@
 
 #include "Types.h"
 
-angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount);
+#include "EngineSpeed.h"
 
-angle_t getAngleTdcHalfCycle(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount);
+template<typename angle_t>
+angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+{
+  // Assumes TDC angles are evenly spaced
+
+  for (int i = 0; i < cylinderCount; i++)
+  {
+    if (cylinder == firingOrder[i])
+    {
+      return i * (720.0 / cylinderCount);
+    }
+  }
+
+  return static_cast<angle_t>(-1.0);
+}
+
+template<typename angle_t>
+angle_t getAngleTdcHalfCycle(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)
+{
+  angle_t angle = getAngleTdc<angle_t>(cylinder, firingOrder, cylinderCount);
+  
+  while (angle >= 360.0)
+  {
+    angle -= 360.0;
+  }
+
+  return angle;
+}
 
 #endif

@@ -80,9 +80,9 @@ void test_getTicksFromAngle()
   ticks_t expected = 3433; // 333.333 ticks/degree
   float rpm = 1000.0; 
   volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
-  volatile angle_t lastCrankEventAngle = 25.0;
+  volatile float lastCrankEventAngle = 25.0;
   volatile ticks_t lastCrankEventTicks = 100;
-  volatile angle_t angle = 35.0;
+  volatile float angle = 35.0;
 
   TIME_START
   volatile ticks_t actual = getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks, inverseCrankSpeedTicksPerDegree, angle);

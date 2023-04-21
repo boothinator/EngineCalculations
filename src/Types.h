@@ -21,16 +21,6 @@
 
 #include <stdint.h>
 
-#ifdef ANGLE_TYPE
-
-using angle_t = (ANGLE_TYPE);
-
-#else // ANGLE_TYPE
-
-using angle_t = float;
-
-#endif // ANGLE_TYPE
-
 using ticks_t = uint32_t;
 
 #endif
