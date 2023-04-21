@@ -38,7 +38,7 @@ float calculateRpm(float crankSpeedDegreesPerTick)
 
 
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
-  float crankSpeedInverseTicksPerDegree, angle_t angle, angle_t cycleAngle)
+  float inverseCrankSpeedTicksPerDegree, angle_t angle, angle_t cycleAngle)
 {
   while (angle < lastCrankEventAngle)
   {
@@ -47,22 +47,22 @@ ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
 
   angle_t angleDiff = angle - lastCrankEventAngle;
 
-  return static_cast<ticks_t>(crankSpeedInverseTicksPerDegree * angleDiff + lastCrankEventTicks);
+  return static_cast<ticks_t>(inverseCrankSpeedTicksPerDegree * angleDiff + lastCrankEventTicks);
 }
 
 
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
-  float crankSpeedInverseTicksPerDegree, angle_t angle)
+  float inverseCrankSpeedTicksPerDegree, angle_t angle)
 {
   return getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks,
-    crankSpeedInverseTicksPerDegree, angle, 720.0);
+    inverseCrankSpeedTicksPerDegree, angle, 720.0);
 }
 
 ticks_t getTicksFromAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
-  float crankSpeedInverseTicksPerDegree, angle_t angle)
+  float inverseCrankSpeedTicksPerDegree, angle_t angle)
 {
   return getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks,
-    crankSpeedInverseTicksPerDegree, angle, 360.0);
+    inverseCrankSpeedTicksPerDegree, angle, 360.0);
 }
 
 // Angle after cylinder 1 TDC

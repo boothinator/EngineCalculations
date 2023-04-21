@@ -79,13 +79,13 @@ void test_getTicksFromAngle()
 {
   ticks_t expected = 3433; // 333.333 ticks/degree
   float rpm = 1000.0; 
-  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile angle_t lastCrankEventAngle = 25.0;
   volatile ticks_t lastCrankEventTicks = 100;
   volatile angle_t angle = 35.0;
 
   TIME_START
-  volatile ticks_t actual = getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedInverseTicksPerDegree, angle);
+  volatile ticks_t actual = getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks, inverseCrankSpeedTicksPerDegree, angle);
   TIME_END
 
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
@@ -100,11 +100,11 @@ void test_calculateInjectionLength()
   ticks_t expected = 18054;
   float rpm = 4000.0; 
   volatile float targetFuelAirRatio = 1.0 / 14.7;
-  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile float airflowGramsPerSecond = 59.0;
 
   TIME_START
-  volatile ticks_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, crankSpeedInverseTicksPerDegree, airflowGramsPerSecond);
+  volatile ticks_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
   TIME_END
 
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
@@ -118,11 +118,11 @@ void test_load()
 {
   float rpm = 4000.0; 
   float expected = 0.7990716;
-  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile float airflowGramsPerSecond = 59.0;
 
   TIME_START
-  volatile float actual = calculateLoadFraction(crankSpeedInverseTicksPerDegree, airflowGramsPerSecond);
+  volatile float actual = calculateLoadFraction(inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
   TIME_END
 
   TEST_ASSERT_EQUAL_FLOAT(expected, actual);
