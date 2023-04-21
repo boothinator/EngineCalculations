@@ -1,0 +1,23 @@
+{
+  "name": "EngineCalculations",
+  "version": "0.0.1",
+  "description": "Perform basic automotive engine calculations.",
+  "keywords": "automotive",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/boothinator/EngineCalculations.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Joshua Booth",
+      "email": "boothin8or@gmail.com"
+    }
+  ],
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://github.com/boothinator/EngineCalculations",
+  "frameworks": "*",
+  "platforms": "*",
+  "headers": "EngineCalculations.h"
+}
