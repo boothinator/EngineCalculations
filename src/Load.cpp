@@ -22,7 +22,7 @@
 namespace
 {
 
-float loadFractionMultiplier = 0;
+float loadFractionMultiplierSDegreePerGTick = 0;
 
 // NIST STP at 20 C and 101.325 kPa
 constexpr float airDensityAtNtpKgPerCubicMeter = 1.2041;
@@ -34,7 +34,7 @@ constexpr float airDensityAtNtpGramsPerCc =
 
 } // namespace
 
-void configureLoadCalculation(float cylinderBoreCm, float cylinderStrokeCm)
+void configureLoadCalculation(ticks_t ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm)
 {
   float cylinderRadiusCm = cylinderBoreCm / 2.0;
   float cylinderAreaSqCm =  M_PI * cylinderRadiusCm * cylinderRadiusCm;
@@ -42,16 +42,19 @@ void configureLoadCalculation(float cylinderBoreCm, float cylinderStrokeCm)
   // Load = Airflow / Cylinder Max Airflow
   // Cylinder Max Airflow = Piston max velocity cm/s * Cylinder area cm^2 * Air density at STP g/cm^3
 
-  float cylinderMaxAirflowG = 
-    (M_PI / 60.0)
-    * cylinderStrokeCm
-    * cylinderAreaSqCm
+  float cylinderMaxAirflowGPerDegree = 
+    (1.0 / 180.0) /* stroke / degrees */
+    * cylinderStrokeCm * cylinderAreaSqCm /* cc / stroke */
     * airDensityAtNtpGramsPerCc;
 
-  loadFractionMultiplier = 1.0 / cylinderMaxAirflowG;
+  loadFractionMultiplierSDegreePerGTick =
+    (1.0 / ticksPerSecond) /* seconds / tick */
+    * (1.0 / cylinderMaxAirflowGPerDegree); /* degrees / g */
 }
 
-float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond)
+float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
 {
-  return airflowGramsPerSecond * inverseRpm * loadFractionMultiplier;
+  return airflowGramsPerSecond
+    * inverseCrankSpeedTicksPerDegree
+    * loadFractionMultiplierSDegreePerGTick;
 }

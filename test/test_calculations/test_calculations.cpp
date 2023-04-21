@@ -28,7 +28,7 @@ constexpr float ticksPerSecond = 2000000;
 void setUp(void) {
   configureEngineSpeedCalculations(ticksPerSecond);
   configureInjectionLengthCalculation(ticksPerSecond, 265.0);
-  configureLoadCalculation(8.3, 8.5);
+  configureLoadCalculation(ticksPerSecond, 8.3, 8.5);
 }
 
 void tearDown(void) {
@@ -68,7 +68,7 @@ void test_calculateRpm()
   volatile float actual = calculateRpm(crankSpeedDegreesPerTick);
   TIME_END
 
-  TEST_ASSERT_EQUAL_UINT16(expected, actual);
+  TEST_ASSERT_EQUAL_FLOAT(expected, actual);
 
 #ifdef __AVR_ATmega2560__
   TEST_ASSERT_EQUAL(181, TIME_DIFF);
@@ -114,6 +114,24 @@ void test_calculateInjectionLength()
 #endif
 }
 
+void test_load()
+{
+  float rpm = 4000.0; 
+  float expected = 0.7990716;
+  volatile float crankSpeedInverseTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
+  volatile float airflowGramsPerSecond = 59.0;
+
+  TIME_START
+  volatile float actual = calculateLoadFraction(crankSpeedInverseTicksPerDegree, airflowGramsPerSecond);
+  TIME_END
+
+  TEST_ASSERT_EQUAL_FLOAT(expected, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_EQUAL(319, TIME_DIFF);
+#endif
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -131,6 +149,7 @@ void setup() {
   RUN_TEST(test_calculateRpm);
   RUN_TEST(test_getTicksFromAngle);
   RUN_TEST(test_calculateInjectionLength);
+  RUN_TEST(test_load);
 
   UNITY_END(); // stop unit testing
 }

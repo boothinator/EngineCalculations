@@ -21,8 +21,8 @@
 
 #include "Types.h"
 
-void configureLoadCalculation(float cylinderBoreCm, float cylinderStrokeCm);
+void configureLoadCalculation(ticks_t ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm);
 
-float calculateLoadFraction(float inverseRpm, float airflowGramsPerSecond);
+float calculateLoadFraction(float crankSpeedInverseTicksPerDegree, float airflowGramsPerSecond);
 
 #endif
