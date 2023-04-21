@@ -20,7 +20,7 @@
 #pragma once
 
 void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin,
-  float fuelDensityGramPerCc = 0.755);
+  int cylindersPerAirflowSensor, float fuelDensityGramPerCc = 0.755);
 
 bool isInjectionLengthConfigured();
 
