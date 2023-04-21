@@ -19,12 +19,9 @@
 
 #pragma once
 
-#include "Types.h"
-
-void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorFlowCcPerMin,
+void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin,
   float fuelDensityGramPerCc = 0.755);
 
-// FIXME: use crank speed inverse
-ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+float calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
 
 #endif

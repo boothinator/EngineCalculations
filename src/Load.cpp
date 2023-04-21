@@ -34,7 +34,7 @@ constexpr float airDensityAtNtpGramsPerCc =
 
 } // namespace
 
-void configureLoadCalculation(ticks_t ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm)
+void configureLoadCalculation(float ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm)
 {
   float cylinderRadiusCm = cylinderBoreCm / 2.0;
   float cylinderAreaSqCm =  M_PI * cylinderRadiusCm * cylinderRadiusCm;

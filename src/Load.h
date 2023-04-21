@@ -19,9 +19,7 @@
 
 #pragma once
 
-#include "Types.h"
-
-void configureLoadCalculation(ticks_t ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm);
+void configureLoadCalculation(float ticksPerSecond, float cylinderBoreCm, float cylinderStrokeCm);
 
 float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
 

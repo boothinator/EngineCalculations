@@ -19,13 +19,11 @@
 
 #pragma once
 
-#include "Types.h"
-
-void configureEngineSpeedCalculations(ticks_t ticksPerSecond);
+void configureEngineSpeedCalculations(float ticksPerSecond);
 
 float calculateRpm(float crankSpeedDegreesPerTick);
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float inverseCrankSpeedTicksPerDegree, angle_t angle, angle_t cycleAngle)
 {
@@ -39,7 +37,7 @@ ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
   return static_cast<ticks_t>(inverseCrankSpeedTicksPerDegree * angleDiff + lastCrankEventTicks);
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float inverseCrankSpeedTicksPerDegree, angle_t angle)
 {
@@ -47,7 +45,7 @@ ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
     inverseCrankSpeedTicksPerDegree, angle, static_cast<angle_t>(720));
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 ticks_t getTicksFromAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float inverseCrankSpeedTicksPerDegree, angle_t angle)
 {
@@ -56,7 +54,7 @@ ticks_t getTicksFromAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCran
 }
 
 // Angle after cylinder 1 TDC
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks, angle_t cycleAngle)
 {
@@ -74,14 +72,14 @@ angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   return angle;
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {
   return getAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, static_cast<angle_t>(720));
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {
@@ -90,7 +88,7 @@ angle_t getAngleHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
 
 
 // Angle after cylinder 1 TDC. Assumes that ticks is before lastCrankEventTicks
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngleInPast(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks, angle_t cycleAngle)
 {
@@ -108,14 +106,14 @@ angle_t getAngleInPast(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   return angle;
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngleInPast(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {
   return getAngleInPast(lastCrankEventAngle, lastCrankEventTicks, crankSpeedDegreesPerTick, ticks, static_cast<angle_t>(720));
 }
 
-template<typename angle_t>
+template<typename angle_t, typename ticks_t>
 angle_t getAngleInPastHalfCycle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
   float crankSpeedDegreesPerTick, ticks_t ticks)
 {

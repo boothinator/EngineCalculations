@@ -19,9 +19,9 @@
 
 #pragma once
 
-#include "Types.h"
-
 #include "EngineSpeed.h"
+
+#include <stdint.h>
 
 template<typename angle_t>
 angle_t getAngleTdc(int cylinder, uint8_t *firingOrder, uint8_t cylinderCount)

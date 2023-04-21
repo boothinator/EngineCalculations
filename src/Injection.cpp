@@ -28,7 +28,7 @@ float injectionLengthMultiplierSecDegTicksPerGramStroke = 0;
 
 } // namespace
 
-void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorFlowCcPerMin, float fuelDensityGramPerCc)
+void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin, float fuelDensityGramPerCc)
 {
   // Injection length formula:
   //   injectionCc = (airflow * injectionCcMultiplier) / (rpm * targetAfr)
@@ -40,7 +40,7 @@ void configureInjectionLengthCalculation(ticks_t ticksPerSecond, float injectorF
     * ( 1.0 / fuelDensityGramPerCc );
 }
 
-ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
+float calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
 {
   float injLengthTicks =
     airflowGramsPerSecond
@@ -48,5 +48,5 @@ ticks_t calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCra
     * targetFuelAirRatio
     * injectionLengthMultiplierSecDegTicksPerGramStroke;  /* seconds degrees ticks/[g stroke] */
 
-  return static_cast<ticks_t>(injLengthTicks + 0.5);
+  return injLengthTicks;
 }

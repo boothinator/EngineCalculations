@@ -22,7 +22,7 @@ float calculateRpmMultiplierRevTicksPerDegreeMinute = 0;
 
 } // namespace
 
-void configureEngineSpeedCalculations(ticks_t ticksPerSecond)
+void configureEngineSpeedCalculations(float ticksPerSecond)
 {
   calculateRpmMultiplierRevTicksPerDegreeMinute =
     ticksPerSecond
