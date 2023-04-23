@@ -207,9 +207,9 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
   {
     // We're in-between rows, but fully left, right, or on a column exactly
     // Need to interpolate between rows in a single column
-    size_t leftHighIndex = yLowIndex + 1;
+    size_t yHighIndex = yLowIndex + 1;
     size_t output0Index = yLowIndex  * xLength + xLowIndex;
-    size_t output1Index = leftHighIndex * xLength + xLowIndex;
+    size_t output1Index = yHighIndex * xLength + xLowIndex;
 
     Z output00 = outputArray[output0Index];
     Z output10 = outputArray[output1Index];
