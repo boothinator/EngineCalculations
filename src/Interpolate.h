@@ -142,7 +142,7 @@ template<typename Z = float, typename X = float, typename Y = float, typename Re
 ReturnType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Rotate 90 degrees
-  interpolateBilinearXFirst(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
+  return interpolateBilinearXFirst(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
 }
 
 /*
