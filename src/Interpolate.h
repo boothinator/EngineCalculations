@@ -171,7 +171,7 @@ template<typename Z, typename ReturnType = Z,
   typename X, typename Y, 
   typename XArray, typename YArray, typename ZArray>
 ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
-                          ZArray outputArray, XArray xScale, YArray yScale)
+                                    XArray xScale, YArray yScale, ZArray outputArray)
 {
   size_t xLowIndex;
   X xLow;

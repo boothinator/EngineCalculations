@@ -64,14 +64,14 @@ void test_interpolateBilinearTable()
   x = 127;
   y = 127;
   expected = 0;
-  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, zValues, xScale, yScale);
+  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
 
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Exact");
 
   x = 126;
   y = 127;
   expected = 2;
-  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, zValues, xScale, yScale);
+  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Interpolate around center");
 }
 
