@@ -166,9 +166,10 @@ ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z
   }
 }
 
-template<typename X, typename Y, typename Z,
-  typename XArray = X *, typename YArray = Y *, typename ZArray = Z *, typename ReturnType = Z,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float>
+template<typename Z, typename ReturnType = Z,
+  typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float,
+  typename X, typename Y, 
+  typename XArray, typename YArray, typename ZArray>
 ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
                           ZArray outputArray, XArray xScale, YArray yScale)
 {
