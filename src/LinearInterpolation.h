@@ -100,17 +100,83 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
   return FindOnScaleResult::OffScaleLow;
 }
 
+template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
+  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+ReturnType linearInterpolation2DXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+{
+  // Generally: y_interpolated = [ y0 * (x1 - x) + y1 * (x - x0) ] / (x1 - x0)
+
+  // We're interpolating the rows first
+  // Note: z subscripts are x,y. Ex: z01 is at x = 0, y = 1
+
+  // Upcast so we don't overflow fixed-point math when we multiply
+  ReturnType deltaX = static_cast<ReturnType>(x1 - x0);
+  DeltaXMulZ deltaX0 = static_cast<DeltaXMulZ>(x - x0);
+  DeltaXMulZ deltaX1 = static_cast<DeltaXMulZ>(x1 - x);
+
+  // z_row0_interpolated = [ z00 * (x1 - x) + z10 * (x - x0) ] / (x1 - x0)
+  DeltaYMulZ z_row0_num = static_cast<DeltaYMulZ>(static_cast<DeltaXMulZ>(z00) * deltaX1 + static_cast<DeltaXMulZ>(z10) * deltaX0);
+
+  // z_row1_interpolated = [ z01 * (x1 - x) + z11 * (x - x0) ] / (x1 - x0)
+  DeltaYMulZ z_row1_num = static_cast<DeltaYMulZ>(static_cast<DeltaXMulZ>(z01) * deltaX1 + static_cast<DeltaXMulZ>(z11) * deltaX0);
+
+  // Denominators are the same
+  ReturnType z_row_denom = deltaX;
+
+  // Upcast so we don't overflow fixed-point math when we multiply
+  ReturnType deltaY = static_cast<ReturnType>(y1 - y0);
+  DeltaYMulZ deltaY0 = static_cast<DeltaYMulZ>(y - y0);
+  DeltaYMulZ deltaY1 = static_cast<DeltaYMulZ>(y1 - y);
+
+  // z_interpolated = [ z_row0_interpolated * (y1 - y) + z_row1_interpolated * (y - y0) ] / (y1 - y0)
+  DeltaYMulZ z_num = z_row0_num * deltaY1 + z_row1_num * deltaY0;
+
+  // Need to include the Z row denomizator
+  ReturnType z_denom = deltaY * z_row_denom;
+  
+  return static_cast<ReturnType>(z_num) / z_denom;
+}
+
+template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
+  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+ReturnType linearInterpolation2DYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+{
+  // Rotate 90 degrees
+  linearInterpolation2DXFirst(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
+}
+
+/*
+For fixed point math, DeltaXMulZ needs to be big enough to hold any deltaX * Z, and DeltaYMulZ needs
+to be big enough to hold any deltaY * Z. The larger of the two must also be able to hold 
+deltaX * deltaY * z
+ */
+template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
+  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+ReturnType linearInterpolation2D(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+{
+  if (sizeof(DeltaYMulZ) >= sizeof(DeltaXMulZ))
+  {
+    return linearInterpolation2DXFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+      x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  }
+  else
+  {
+    return linearInterpolation2DYFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+      x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  }
+}
+
 template<typename Z, typename X, typename Y, 
   typename XArray, typename YArray, typename ZArray, typename ReturnType = Z,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float>
-ReturnType linearInterp2d(X x, Y y, size_t xLength, size_t yLength,
+ReturnType linearInterpolation2D(X x, Y y, size_t xLength, size_t yLength,
                           ZArray outputArray, XArray xScale, YArray yScale)
 {
   size_t xLowIndex;
   X xLow;
-  X yHigh;
+  X xHigh;
 
-  FindOnScaleResult bottomResult = findOnScale(x, xScale, xLength,  xLowIndex, xLow, yHigh);
+  FindOnScaleResult bottomResult = findOnScale(x, xScale, xLength,  xLowIndex, xLow, xHigh);
 
   size_t yLowIndex;
   Y yLow;
@@ -123,8 +189,8 @@ ReturnType linearInterp2d(X x, Y y, size_t xLength, size_t yLength,
   {
     size_t xHighIndex = xLowIndex + 1;
 
-    size_t output0Index = yLowIndex + xLowIndex  * xScale.getLength();
-    size_t output1Index = yLowIndex + xHighIndex * xScale.getLength();
+    size_t output0Index = yLowIndex + xLowIndex  * xLength;
+    size_t output1Index = yLowIndex + xHighIndex * xLength;
 
     Z output00 = outputArray[output0Index];
     Z output10 = outputArray[output0Index + 1];
@@ -132,7 +198,7 @@ ReturnType linearInterp2d(X x, Y y, size_t xLength, size_t yLength,
     Z output11 = outputArray[output1Index + 1];
 
     return linearInterpolation2D<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
-        x, xLow, yHigh,
+        x, xLow, xHigh,
         y, yLow, yHigh,
         output00, output10, output01, output11);
   }
@@ -141,33 +207,37 @@ ReturnType linearInterp2d(X x, Y y, size_t xLength, size_t yLength,
     // We're in-between rows, but fully left, right, or on a column exactly
     // Need to interpolate between rows in a single column
     size_t leftHighIndex = yLowIndex + 1;
-    size_t output0Index = yLowIndex  * xScale.getLength() + xLowIndex;
-    size_t output1Index = leftHighIndex * xScale.getLength() + xLowIndex;
+    size_t output0Index = yLowIndex  * xLength + xLowIndex;
+    size_t output1Index = leftHighIndex * xLength + xLowIndex;
 
     Z output00 = outputArray[output0Index];
     Z output10 = outputArray[output1Index];
 
-    SlopeType slope = calculateSlope<SlopeType>(output00, output10, yLow, yHigh);
+    SlopeType slope = static_cast<SlopeType>(output10 - output00) / static_cast<SlopeType>(yHigh - yLow);
 
-    return static_cast<ReturnType>(linpoly(slope, leftInput - yLow, output00));
+    Y deltaY = y - yLow;
+
+    return static_cast<ReturnType>(slope * deltaY + output00);
   }
   else if (FindOnScaleResult::InBetween == bottomResult)
   {
     // We're in-between columns, but fully top, bottom, or on a row exactly
     // Need to interpolate between columns in a single row
-    size_t output0Index = yLowIndex * xScale.getLength() + xLowIndex;
+    size_t output0Index = yLowIndex * xLength + xLowIndex;
 
     Z output00 = outputArray[output0Index];
     Z output01 = outputArray[output0Index + 1];
 
-    SlopeType slope = calculateSlope<SlopeType>(output00, output01, xLow, yHigh);
+    SlopeType slope = static_cast<SlopeType>(output01 - output00) / static_cast<SlopeType>(xHigh - xLow);
 
-    return static_cast<ReturnType>(linpoly(slope, bottomInput - xLow, output00));
+    X deltaX = x - xLow;
+
+    return static_cast<ReturnType>(slope * deltaX + output00);
   }
   else
   {
-    size_t output0Index = yLowIndex * xScale.getLength() + xLowIndex;
-    return static_cast<ReturnType>(outputGetter.getIndexed(output0Index));
+    size_t output0Index = yLowIndex * xLength + xLowIndex;
+    return static_cast<ReturnType>(outputArray[output0Index]);
   }
 }
 
