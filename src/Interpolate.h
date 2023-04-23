@@ -102,7 +102,7 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
 
 template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float>
-ReturnType linearInterpolation2DXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Generally: y_interpolated = [ y0 * (x1 - x) + y1 * (x - x0) ] / (x1 - x0)
 
@@ -139,10 +139,10 @@ ReturnType linearInterpolation2DXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, 
 
 template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float>
-ReturnType linearInterpolation2DYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+ReturnType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Rotate 90 degrees
-  linearInterpolation2DXFirst(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
+  interpolateBilinearXFirst(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
 }
 
 /*
@@ -152,16 +152,16 @@ deltaX * deltaY * z
  */
 template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float>
-ReturnType linearInterpolation2D(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   if (sizeof(DeltaYMulZ) >= sizeof(DeltaXMulZ))
   {
-    return linearInterpolation2DXFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinearXFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
       x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   }
   else
   {
-    return linearInterpolation2DYFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinearYFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
       x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   }
 }
@@ -169,7 +169,7 @@ ReturnType linearInterpolation2D(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10,
 template<typename Z, typename X, typename Y, 
   typename XArray, typename YArray, typename ZArray, typename ReturnType = Z,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float>
-ReturnType linearInterpolation2D(X x, Y y, size_t xLength, size_t yLength,
+ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
                           ZArray outputArray, XArray xScale, YArray yScale)
 {
   size_t xLowIndex;
@@ -197,7 +197,7 @@ ReturnType linearInterpolation2D(X x, Y y, size_t xLength, size_t yLength,
     Z output01 = outputArray[output1Index];
     Z output11 = outputArray[output1Index + 1];
 
-    return linearInterpolation2D<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinear<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
         x, xLow, xHigh,
         y, yLow, yHigh,
         output00, output10, output01, output11);

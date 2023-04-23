@@ -23,6 +23,7 @@
 #include "Injection.h"
 #include "Load.h"
 #include "Events.h"
+#include "Interpolate.h"
 
 bool areEngineCalculationsConfigured();
 
