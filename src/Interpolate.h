@@ -215,7 +215,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
 
     SlopeType slope = static_cast<SlopeType>(output10 - output00) / static_cast<SlopeType>(yHigh - yLow);
 
-    return static_cast<ReturnType>(slope * (y - yLow) + output00);
+    return static_cast<ReturnType>(slope) * static_cast<ReturnType>(y - yLow) + static_cast<ReturnType>(output00);
   }
   else if (FindOnScaleResult::InBetween == bottomResult)
   {
@@ -228,7 +228,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
 
     SlopeType slope = static_cast<SlopeType>(output01 - output00) / static_cast<SlopeType>(xHigh - xLow);
 
-    return static_cast<ReturnType>(slope * (x - xLow) + output00);
+    return static_cast<ReturnType>(slope) * static_cast<ReturnType>(x - xLow) + static_cast<ReturnType>(output00);
   }
   else
   {
