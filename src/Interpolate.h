@@ -177,16 +177,16 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
   X xLow;
   X xHigh;
 
-  FindOnScaleResult bottomResult = findOnScale(x, xScale, xLength,  xLowIndex, xLow, xHigh);
+  FindOnScaleResult xResult = findOnScale(x, xScale, xLength,  xLowIndex, xLow, xHigh);
 
   size_t yLowIndex;
   Y yLow;
   Y yHigh;
 
-  FindOnScaleResult leftResult = findOnScale(y, yScale, yLength, yLowIndex, yLow, yHigh);
+  FindOnScaleResult yResult = findOnScale(y, yScale, yLength, yLowIndex, yLow, yHigh);
 
-  if (FindOnScaleResult::InBetween == leftResult
-    && FindOnScaleResult::InBetween == bottomResult)
+  if (FindOnScaleResult::InBetween == yResult
+    && FindOnScaleResult::InBetween == xResult)
   {
     size_t xHighIndex = xLowIndex + 1;
 
@@ -203,7 +203,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
         y, yLow, yHigh,
         output00, output10, output01, output11);
   }
-  else if (FindOnScaleResult::InBetween == leftResult)
+  else if (FindOnScaleResult::InBetween == yResult)
   {
     // We're in-between rows, but fully left, right, or on a column exactly
     // Need to interpolate between rows in a single column
@@ -218,7 +218,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
 
     return static_cast<ReturnType>(slope) * static_cast<ReturnType>(y - yLow) + static_cast<ReturnType>(output00);
   }
-  else if (FindOnScaleResult::InBetween == bottomResult)
+  else if (FindOnScaleResult::InBetween == xResult)
   {
     // We're in-between columns, but fully top, bottom, or on a row exactly
     // Need to interpolate between columns in a single row
