@@ -50,18 +50,29 @@ void test_interpolateBilinearTable()
 {
   const uint8_t xScale[] = {63, 127, 191};
   const uint8_t yScale[] = {63, 127, 191};
-  const uint8_t zValues[] = {254, 127, 254,
-                             127,   0, 127,
-                             254, 127, 254};
+  const uint8_t zValues[] = {254, 127, 254,  //  63
+                             127,   0, 127,  // 127
+                             254, 127, 254}; // 191
   
   const size_t xLength = sizeof(xScale) / sizeof(xScale[0]);
   const size_t yLength = sizeof(yScale) / sizeof(yScale[0]);
 
   uint8_t x;
   uint8_t y;
-  uint8_t expected;
+  uint8_t expected, actual;
   
-  interpolateBilinearTable(x, y, xLength, yLength, zValues, xScale, yScale);
+  x = 127;
+  y = 127;
+  expected = 0;
+  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, zValues, xScale, yScale);
+
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Exact");
+
+  x = 126;
+  y = 127;
+  expected = 2;
+  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, zValues, xScale, yScale);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Interpolate around center");
 }
 
 void setup() {
