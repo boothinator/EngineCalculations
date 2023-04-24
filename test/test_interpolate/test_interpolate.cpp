@@ -72,22 +72,26 @@ void test_interpolateBilinearTable()
   y = 127;
   expected = 1.984375;
   actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
-  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center");
+  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center x below");
 
   x = 128;
   y = 127;
+  expected = 1.984375;
   actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
-  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center");
+  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center x above");
 
   x = 127;
   y = 126;
+  expected = 1.984375;
   actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
-  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center");
+  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center y below");
 
   x = 127;
   y = 128;
+  expected = 1.984375;
   actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
-  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center");
+  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center y above");
+
 }
 
 void setup() {
