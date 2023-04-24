@@ -29,7 +29,7 @@ template<typename ArrayT>
 bool inAscendingOrder(ArrayT arr, size_t length)
 {
   auto prev = arr[0];
-  for (uint16_t i = 1; i < _length; i++)
+  for (uint16_t i = 1; i < length; i++)
   {
     auto cur = arr[i];
 
