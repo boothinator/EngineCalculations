@@ -190,13 +190,10 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
   {
     size_t xHighIndex = xLowIndex + 1;
 
-    size_t output0Index = yLowIndex + xLowIndex  * xLength;
-    size_t output1Index = yLowIndex + xHighIndex * xLength;
-
-    Z output00 = outputArray[output0Index];
-    Z output10 = outputArray[output0Index + 1];
-    Z output01 = outputArray[output1Index];
-    Z output11 = outputArray[output1Index + 1];
+    Z output00 = outputArray[yLowIndex     + xLowIndex  * xLength];
+    Z output10 = outputArray[yLowIndex     + xHighIndex * xLength];
+    Z output01 = outputArray[yLowIndex + 1 + xLowIndex  * xLength];
+    Z output11 = outputArray[yLowIndex + 1 + xHighIndex * xLength];
 
     return interpolateBilinear<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
         x, xLow, xHigh,
