@@ -100,8 +100,8 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
   return FindOnScaleResult::OffScaleLow;
 }
 
-template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
+  typename X = float, typename Y = float, typename Z = float>
 ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Generally: y_interpolated = [ y0 * (x1 - x) + y1 * (x - x0) ] / (x1 - x0)
@@ -137,8 +137,8 @@ ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z 
   return static_cast<ReturnType>(z_num) / z_denom;
 }
 
-template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
+  typename X = float, typename Y = float, typename Z = float>
 ReturnType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Rotate 90 degrees
@@ -150,18 +150,18 @@ For fixed point math, DeltaXMulZ needs to be big enough to hold any deltaX * Z, 
 to be big enough to hold any deltaY * Z. The larger of the two must also be able to hold 
 deltaX * deltaY * z
  */
-template<typename Z = float, typename X = float, typename Y = float, typename ReturnType = float,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float>
+template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
+  typename X = float, typename Y = float, typename Z = float>
 ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   if (sizeof(DeltaYMulZ) >= sizeof(DeltaXMulZ))
   {
-    return interpolateBilinearXFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinearXFirst<ReturnType, DeltaXMulZ, DeltaYMulZ>(
       x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   }
   else
   {
-    return interpolateBilinearYFirst<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinearYFirst<ReturnType, DeltaXMulZ, DeltaYMulZ>(
       x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   }
 }
@@ -195,7 +195,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output01 = outputArray[yLowIndex + 1 + xLowIndex  * xLength];
     Z output11 = outputArray[yLowIndex + 1 + xHighIndex * xLength];
 
-    return interpolateBilinear<Z, X, Y, ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinear<ReturnType, DeltaXMulZ, DeltaYMulZ>(
         x, xLow, xHigh,
         y, yLow, yHigh,
         output00, output10, output01, output11);
