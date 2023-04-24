@@ -211,7 +211,8 @@ ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z
 }
 
 template<typename Z, typename ReturnType = float,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float,
+  typename DeltaXMulZ = float, typename DeltaYMulZ = float,
+  typename SlopeType = float, uint8_t slopeShift = 0,
   typename X, typename Y, 
   typename XArray, typename YArray, typename ZArray>
 ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
@@ -252,12 +253,10 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     size_t output0Index = yLowIndex  * xLength + xLowIndex;
     size_t output1Index = yHighIndex * xLength + xLowIndex;
 
-    Z output00 = outputArray[output0Index];
-    Z output01 = outputArray[output1Index];
+    Z output0 = outputArray[output0Index];
+    Z output1 = outputArray[output1Index];
 
-    SlopeType slope = static_cast<SlopeType>(output01 - output00) / static_cast<SlopeType>(yHigh - yLow);
-
-    return static_cast<ReturnType>(slope) * static_cast<ReturnType>(y - yLow) + static_cast<ReturnType>(output00);
+    return interpolateLinear<SlopeType, slopeShift>(y, yLow, yHigh, output0, output1);
   }
   else if (FindOnScaleResult::InBetween == xResult)
   {
@@ -265,12 +264,10 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     // Need to interpolate between columns in a single row
     size_t output0Index = yLowIndex * xLength + xLowIndex;
 
-    Z output00 = outputArray[output0Index];
-    Z output10 = outputArray[output0Index + 1];
+    Z output0 = outputArray[output0Index];
+    Z output1 = outputArray[output0Index + 1];
 
-    SlopeType slope = static_cast<SlopeType>(output10 - output00) / static_cast<SlopeType>(xHigh - xLow);
-
-    return static_cast<ReturnType>(slope) * static_cast<ReturnType>(x - xLow) + static_cast<ReturnType>(output00);
+    return interpolateLinear<SlopeType, slopeShift>(x, xLow, xHigh, output0, output1);
   }
   else
   {
