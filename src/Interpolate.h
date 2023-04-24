@@ -212,9 +212,9 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     size_t output1Index = yHighIndex * xLength + xLowIndex;
 
     Z output00 = outputArray[output0Index];
-    Z output10 = outputArray[output1Index];
+    Z output01 = outputArray[output1Index];
 
-    SlopeType slope = static_cast<SlopeType>(output10 - output00) / static_cast<SlopeType>(yHigh - yLow);
+    SlopeType slope = static_cast<SlopeType>(output01 - output00) / static_cast<SlopeType>(yHigh - yLow);
 
     return static_cast<ReturnType>(slope) * static_cast<ReturnType>(y - yLow) + static_cast<ReturnType>(output00);
   }
@@ -225,9 +225,9 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     size_t output0Index = yLowIndex * xLength + xLowIndex;
 
     Z output00 = outputArray[output0Index];
-    Z output01 = outputArray[output0Index + 1];
+    Z output10 = outputArray[output0Index + 1];
 
-    SlopeType slope = static_cast<SlopeType>(output01 - output00) / static_cast<SlopeType>(xHigh - xLow);
+    SlopeType slope = static_cast<SlopeType>(output10 - output00) / static_cast<SlopeType>(xHigh - xLow);
 
     return static_cast<ReturnType>(slope) * static_cast<ReturnType>(x - xLow) + static_cast<ReturnType>(output00);
   }
