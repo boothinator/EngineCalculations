@@ -136,16 +136,25 @@ void test_interpolateBilinear()
   x = 127;
   y = 127;
   expected = 127;
+
   TIME_START
   actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
   TEST_ASSERT_UINT16_WITHIN(10, 944, TIME_DIFF);
+
+  TIME_START
+  actual = static_cast<uint64_t>(interpolateBilinearXFirst(x, x0, x1, y, y0, y1, z00, z10, z01, z11));
+  TIME_END
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First Float");
+  TEST_ASSERT_UINT16_WITHIN(10, 2407, TIME_DIFF);
+
   TIME_START
   actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
   TEST_ASSERT_UINT16_WITHIN(10, 946, TIME_DIFF);
+
   actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
   actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
@@ -154,34 +163,53 @@ void test_interpolateBilinear()
   x = 63;
   y = 127;
   expected = 94;
+
   TIME_START
   actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
   TEST_ASSERT_UINT16_WITHIN(10, 928, TIME_DIFF);
+  
+  TIME_START
+  actual = static_cast<uint64_t>(interpolateBilinearXFirst(x, x0, x1, y, y0, y1, z00, z10, z01, z11));
+  TIME_END
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First Float");
+  TEST_ASSERT_UINT16_WITHIN(10, 2475, TIME_DIFF);
+  
   TIME_START
   actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
   TEST_ASSERT_UINT16_WITHIN(10, 928, TIME_DIFF);
+  
   actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
+  
   actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "Y First DeltaXMulZ should be too small for result");
 
   x = 63;
   y = 63;
   expected = 78;
+
   TIME_START
   actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
   TEST_ASSERT_UINT16_WITHIN(10, 920, TIME_DIFF);
+
+  TIME_START
+  actual = static_cast<uint64_t>(interpolateBilinearXFirst(x, x0, x1, y, y0, y1, z00, z10, z01, z11));
+  TIME_END
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First Float");
+  TEST_ASSERT_UINT16_WITHIN(10, 2449, TIME_DIFF);
+
   TIME_START
   actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TIME_END
   TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
   TEST_ASSERT_UINT16_WITHIN(10, 920, TIME_DIFF);
+
   actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
   TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
   actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
