@@ -46,6 +46,62 @@ uint16_t start, end;
 
 #endif
 
+void test_interpolateBilinear()
+{
+  uint8_t x, x0, x1;
+  uint8_t y, y0, y1;
+  uint8_t z00, z10;
+  uint8_t z01, z11;
+  uint64_t expected;
+  uint64_t actual;
+
+  x0 = 0;
+  x1 = 255;
+  y0 = 0;
+  y1 = 255;
+
+  z00 = 0;
+  z10 = 255;
+  z01 = 127;
+  z11 = 127;
+
+  x = 127;
+  y = 127;
+  expected = 127;
+  actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
+  actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
+  actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
+  actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "Y First DeltaXMulZ should be too small for result");
+
+  x = 63;
+  y = 127;
+  expected = 94;
+  actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
+  actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
+  actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
+  actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "Y First DeltaXMulZ should be too small for result");
+
+  x = 63;
+  y = 63;
+  expected = 78;
+  actual = interpolateBilinearXFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "X First");
+  actual = interpolateBilinearYFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_EQUAL_MESSAGE(expected, actual, "Y First");
+  actual = interpolateBilinearXFirst<uint64_t, uint32_t, uint16_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "X First DeltaYMulZ should be too small for result");
+  actual = interpolateBilinearYFirst<uint64_t, uint16_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "Y First DeltaXMulZ should be too small for result");
+}
+
 void test_interpolateBilinearTable()
 {
   const uint8_t xScale[] = {63, 127, 191};
@@ -71,6 +127,8 @@ void test_interpolateBilinearTable()
   x = 126;
   y = 127;
   expected = 1.984375;
+  actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
+  TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center x below");
   actual = interpolateBilinearTable<uint8_t>(x, y, xLength, yLength, xScale, yScale, zValues);
   TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate around center x below");
 
@@ -131,6 +189,7 @@ void setup() {
   TCCR1B = 1;
 #endif
 
+  RUN_TEST(test_interpolateBilinear);
   RUN_TEST(test_interpolateBilinearTable);
 
   UNITY_END(); // stop unit testing
