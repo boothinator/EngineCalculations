@@ -31,14 +31,17 @@ float injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder = 0.0;
 void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin, int cylindersPerAirflowSensor, float fuelDensityGramPerCc)
 {
   // Injection length formula:
-  //   injectionCc = (airflow * injectionCcMultiplier) / (rpm * targetAfr)
-  //   injLengthTicks = injectionCc * injectorFlowTicksPerCc
+  //   air quantity per intake stroke = (airflow g/s) * (seconds / tick) * (crank speed ticks / degree) * 180 degrees
+  //   air quantity g =  air quantity per intake stroke * ( 4 strokes / cylinders per airflow sensor )
+  //   injection g = airflow g * fuel/air ratio
+  //   injection amount cc = injection g * (1 / [fuel density g/cc])
+  //   injLengthTicks = injection amount cc * (1 / [injectorFlow cc/min] ) * (60 s / min) * (crank speed ticks / second)
 
   injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder = /* seconds degrees ticks/[g stroke cylinder] */
     ( 1.0 / injectorFlowCcPerMin )
     * 60.0 / 1.0 /* seconds / minute */
-    * 180.0 / 1.0 /* degrees / stroke */
-    * 4 / cylindersPerAirflowSensor /* [stroke / airflow sensor] / [cylinder / airflow sensor] */
+    * 180.0 / 1.0 /* degrees / intake stroke */
+    * 4 / cylindersPerAirflowSensor /* [intake stroke / airflow sensor] / [cylinder / airflow sensor] */
     * ( 1.0 / fuelDensityGramPerCc );
 }
 
