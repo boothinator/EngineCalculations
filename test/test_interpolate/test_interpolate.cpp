@@ -78,6 +78,8 @@ void test_interpolateLinear()
   expected = 95;
   actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
   TEST_ASSERT_EQUAL(expected, actual);
+  
+  expected = 96;
   actual = interpolateLinear<uint16_t, 8>(input, inputLow, inputHigh, outputLow, outputHigh);
   TEST_ASSERT_EQUAL(expected, actual);
 }

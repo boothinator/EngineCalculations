@@ -108,9 +108,17 @@ SlopeType interpolateLinear(InputType input, InputType inputLow, InputType input
   // Shift for fixed-point math
   constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
 
-  SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
-
-  return (slope * static_cast<SlopeType>(input - inputLow)) / shiftMul + output0;
+  if (0 == slopeShift || output1 > output0)
+  {
+    SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+    return (slope * static_cast<SlopeType>(input - inputLow)) / shiftMul + output0;
+  }
+  else
+  {
+    // Assume we're dealing with unsigned fixed-point math
+    SlopeType slope = (static_cast<SlopeType>(output0 - output1) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+    return output0 - (slope * static_cast<SlopeType>(input - inputLow)) / shiftMul;
+  }
 }
 
 template<typename SlopeType = float, uint8_t slopeShift = 0,
