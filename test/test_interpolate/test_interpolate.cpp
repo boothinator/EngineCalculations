@@ -46,6 +46,23 @@ uint16_t start, end;
 
 #endif
 
+void test_interpolateLinear()
+{
+  uint8_t input;
+  const uint8_t inputScale[] = {0, 127, 255};
+  const uint8_t outputArray[] = {0, 190, 255};
+
+  const size_t length = sizeof(inputScale) / sizeof(inputScale[0]);
+
+  uint32_t expected;
+  uint32_t actual;
+
+  input = 63;
+  expected = 94;
+  actual = interpolateLinearTable<uint8_t>(input, length, inputScale, outputArray);
+  TEST_ASSERT_EQUAL(expected, actual);
+}
+
 void test_interpolateBilinear()
 {
   uint8_t x, x0, x1;
@@ -213,6 +230,7 @@ void setup() {
   TCCR1B = 1;
 #endif
 
+  RUN_TEST(test_interpolateLinear);
   RUN_TEST(test_interpolateBilinear);
   RUN_TEST(test_interpolateBilinearTable);
 

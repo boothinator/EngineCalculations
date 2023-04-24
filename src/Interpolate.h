@@ -100,6 +100,31 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
   return FindOnScaleResult::OffScaleLow;
 }
 
+template<typename ReturnType, typename SlopeType = float,
+  typename InputType, typename InputArray, typename OutputArray>
+ReturnType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)
+{
+  size_t index;
+  InputType inputLow, inputHigh;
+
+  FindOnScaleResult result = findOnScale(input, inputScale, length, index, inputLow, inputHigh);
+
+  // Need to interpolate
+  if (FindOnScaleResult::InBetween == result)
+  {
+    auto output0 = outputArray[index];
+    auto output1 = outputArray[index + 1];
+
+    SlopeType slope = static_cast<SlopeType>(output1 - output0) / static_cast<SlopeType>(inputHigh - inputLow);
+
+    return static_cast<ReturnType>(slope * static_cast<SlopeType>(input - inputLow)) + static_cast<ReturnType>(output0);
+  }
+  else
+  {
+    return static_cast<ReturnType>(outputArray[index]);
+  }
+}
+
 template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
   typename X = float, typename Y = float, typename Z = float>
 ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
