@@ -166,7 +166,7 @@ ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z
   }
 }
 
-template<typename Z, typename ReturnType = Z,
+template<typename Z, typename ReturnType = float,
   typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename SlopeType = float,
   typename X, typename Y, 
   typename XArray, typename YArray, typename ZArray>
