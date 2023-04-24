@@ -25,6 +25,23 @@
 
 enum class FindOnScaleResult: uint8_t {InBetween, Exact, OffScaleHigh, OffScaleLow};
 
+template<typename ArrayT>
+bool inAscendingOrder(ArrayT arr, size_t length)
+{
+  auto prev = arr[0];
+  for (uint16_t i = 1; i < _length; i++)
+  {
+    auto cur = arr[i];
+
+    if (prev > cur)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /**
  * @brief Find the value on the scale
  * 
