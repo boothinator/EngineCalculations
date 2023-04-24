@@ -100,9 +100,22 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
   return FindOnScaleResult::OffScaleLow;
 }
 
-template<typename ReturnType, typename SlopeType = float,
+template<typename SlopeType = float, uint8_t slopeShift = 0, typename InputType, typename OutputType>
+SlopeType interpolateLinear(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+{
+  static_assert(sizeof(SlopeType) * 8 >= sizeof(OutputType) * 8 + slopeShift, "SlopeType too small");
+
+  // Shift for fixed-point math
+  constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
+
+  SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+
+  return (slope * static_cast<SlopeType>(input - inputLow)) / shiftMul + output0;
+}
+
+template<typename SlopeType = float, uint8_t slopeShift = 0,
   typename InputType, typename InputArray, typename OutputArray>
-ReturnType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)
+SlopeType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)
 {
   size_t index;
   InputType inputLow, inputHigh;
@@ -115,13 +128,11 @@ ReturnType interpolateLinearTable(InputType input, size_t length, InputArray inp
     auto output0 = outputArray[index];
     auto output1 = outputArray[index + 1];
 
-    SlopeType slope = static_cast<SlopeType>(output1 - output0) / static_cast<SlopeType>(inputHigh - inputLow);
-
-    return static_cast<ReturnType>(slope * static_cast<SlopeType>(input - inputLow)) + static_cast<ReturnType>(output0);
+    return interpolateLinear<SlopeType, slopeShift>(input, inputLow, inputHigh, output0, output1);
   }
   else
   {
-    return static_cast<ReturnType>(outputArray[index]);
+    return static_cast<SlopeType>(outputArray[index]);
   }
 }
 

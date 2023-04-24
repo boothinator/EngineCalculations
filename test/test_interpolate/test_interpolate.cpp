@@ -49,6 +49,42 @@ uint16_t start, end;
 void test_interpolateLinear()
 {
   uint8_t input;
+  uint8_t inputLow;
+  uint8_t inputHigh;
+  uint8_t outputLow;
+  uint8_t outputHigh;
+
+  uint32_t expected;
+  uint32_t actual;
+
+  inputLow = 0;
+  inputHigh = 127;
+  outputLow = 0;
+  outputHigh = 190;
+
+  input = 63;
+  expected = 94;
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  TEST_ASSERT_EQUAL(expected, actual);
+  actual = interpolateLinear<uint16_t, 8>(input, inputLow, inputHigh, outputLow, outputHigh);
+  TEST_ASSERT_EQUAL(expected, actual);
+
+  inputLow = 0;
+  inputHigh = 127;
+  outputLow = 190;
+  outputHigh = 0;
+
+  input = 63;
+  expected = 95;
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  TEST_ASSERT_EQUAL(expected, actual);
+  actual = interpolateLinear<uint16_t, 8>(input, inputLow, inputHigh, outputLow, outputHigh);
+  TEST_ASSERT_EQUAL(expected, actual);
+}
+
+void test_interpolateLinearTable()
+{
+  uint8_t input;
   const uint8_t inputScale[] = {0, 127, 255};
   const uint8_t outputArray[] = {0, 190, 255};
 
@@ -59,7 +95,7 @@ void test_interpolateLinear()
 
   input = 63;
   expected = 94;
-  actual = interpolateLinearTable<uint8_t>(input, length, inputScale, outputArray);
+  actual = interpolateLinearTable(input, length, inputScale, outputArray);
   TEST_ASSERT_EQUAL(expected, actual);
 }
 
@@ -231,6 +267,7 @@ void setup() {
 #endif
 
   RUN_TEST(test_interpolateLinear);
+  RUN_TEST(test_interpolateLinearTable);
   RUN_TEST(test_interpolateBilinear);
   RUN_TEST(test_interpolateBilinearTable);
 
