@@ -110,7 +110,8 @@ void test_interpolateLinearFloat()
   TEST_ASSERT_UINT16_WITHIN(10, 1043, TIME_DIFF);
 }
 
-template<typename InputType, typename OutputType, int expectedTicks, int ticksWithin>
+template<typename InputType, typename OutputType, int expectedTicks, int ticksWithin,
+  OutputType (*intLin)(InputType, InputType, InputType, OutputType, OutputType) = interpolateLinear<InputType, OutputType>>
 void test_interpolateLinear()
 {
   volatile InputType input;
@@ -131,7 +132,7 @@ void test_interpolateLinear()
   expected = 94; // 94.25197
 
   TIME_START
-  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = intLin(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
   TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
@@ -144,7 +145,7 @@ void test_interpolateLinear()
   input = 64;
   expected = 94; // 94.25197
   TIME_START
-  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = intLin(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
   TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
@@ -158,7 +159,7 @@ void test_interpolateLinear()
   expected = 90; // 89.76378
 
   TIME_START
-  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = intLin(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
   TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
@@ -171,7 +172,7 @@ void test_interpolateLinear()
   input = 67;
   expected = 90; // 89.76378
   TIME_START
-  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = intLin(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
   TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
@@ -393,6 +394,12 @@ void test_interpolateBilinearTable()
   TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate off scale y high");
 }
 
+template<typename InputType, typename OutputType, typename SlopeType>
+OutputType interpolateLinearReturnOutputType(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+{
+  return static_cast<OutputType>(interpolateLinear<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1) + 0.5);
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -406,8 +413,8 @@ void setup() {
   // Set Timer 1 to use no prescaling (run in sync with system clock)
   TCCR1B = 1;
 #endif
-
   RUN_TEST(test_interpolateLinearFloat);
+  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t, 1220, 50, interpolateLinearReturnOutputType<uint8_t, uint8_t, float>>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint8_t, 300, 10>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint16_t, 800, 10>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint32_t, 1393, 10>));
