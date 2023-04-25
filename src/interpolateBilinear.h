@@ -91,12 +91,8 @@ ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z
   }
 }
 
-template<typename Z, typename ReturnType = float,
-  typename DeltaXMulZ = float, typename DeltaYMulZ = float,
-  typename SlopeType = float, uint8_t slopeShift = 0,
-  typename X, typename Y, 
-  typename XArray, typename YArray, typename ZArray>
-ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
+template<typename Z, typename X, typename Y, typename XArray, typename YArray, typename ZArray>
+Z interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
                                     XArray xScale, YArray yScale, ZArray outputArray)
 {
   size_t xLowIndex;
@@ -121,7 +117,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output01 = outputArray[yLowIndex + 1 + xLowIndex  * xLength];
     Z output11 = outputArray[yLowIndex + 1 + xHighIndex * xLength];
 
-    return interpolateBilinear<ReturnType, DeltaXMulZ, DeltaYMulZ>(
+    return interpolateBilinear(
         x, xLow, xHigh,
         y, yLow, yHigh,
         output00, output10, output01, output11);
@@ -137,7 +133,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output0 = outputArray[output0Index];
     Z output1 = outputArray[output1Index];
 
-    return interpolateLinear<Y, Z, SlopeType>(y, yLow, yHigh, output0, output1);
+    return interpolateLinear(y, yLow, yHigh, output0, output1);
   }
   else if (FindOnScaleResult::InBetween == xResult)
   {
@@ -148,12 +144,12 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output0 = outputArray[output0Index];
     Z output1 = outputArray[output0Index + 1];
 
-    return interpolateLinear<X, Z, SlopeType>(x, xLow, xHigh, output0, output1);
+    return interpolateLinear(x, xLow, xHigh, output0, output1);
   }
   else
   {
     size_t output0Index = yLowIndex * xLength + xLowIndex;
-    return static_cast<ReturnType>(outputArray[output0Index]);
+    return outputArray[output0Index];
   }
 }
 
