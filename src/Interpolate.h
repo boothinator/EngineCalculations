@@ -125,6 +125,19 @@ SlopeType interpolateLinear(InputType input, InputType inputLow, InputType input
   return slope * static_cast<SlopeType>(input - inputLow) + static_cast<SlopeType>(output0);
 }
 
+// Base case for float, double, or signed custom types that support + - / *
+template<typename InputType, typename OutputType, typename SlopeType = OutputType>
+SlopeType interpolateLinearUnsigned(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+{
+  if (output1 > output0)
+  {
+    return interpolateLinear<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1);
+  }
+
+  SlopeType slope = static_cast<SlopeType>(output0 - output1) / static_cast<SlopeType>(inputHigh - inputLow);
+  return static_cast<SlopeType>(output0) - slope * static_cast<SlopeType>(input - inputLow);
+}
+
 template<>
 uint8_t interpolateLinear<uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
 

@@ -397,7 +397,7 @@ void test_interpolateBilinearTable()
 template<typename InputType, typename OutputType, typename SlopeType>
 OutputType interpolateLinearReturnOutputType(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
 {
-  return static_cast<OutputType>(interpolateLinear<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1) + 0.5);
+  return static_cast<OutputType>(interpolateLinearUnsigned<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }
 
 void setup() {
@@ -413,17 +413,33 @@ void setup() {
   // Set Timer 1 to use no prescaling (run in sync with system clock)
   TCCR1B = 1;
 #endif
-  RUN_TEST(test_interpolateLinearFloat);
-  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t, 1220, 50, interpolateLinearReturnOutputType<uint8_t, uint8_t, float>>));
-  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t, 300, 10>));
-  RUN_TEST((test_interpolateLinear<uint8_t, uint16_t, 800, 10>));
-  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t, 1393, 10>));
-  RUN_TEST((test_interpolateLinear<uint16_t, uint8_t, 800, 10>));
-  RUN_TEST((test_interpolateLinear<uint16_t, uint16_t, 800, 10>));
-  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1417, 10>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t, 1386, 10>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1400, 10>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1456, 10>));
+  RUN_TEST(test_interpolateLinearFloat); //           ~1018
+  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t,   1220, 50, interpolateLinearReturnOutputType<uint8_t, uint8_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t,    300, 10>));
+
+  RUN_TEST((test_interpolateLinear<uint8_t, uint16_t,  1220, 50, interpolateLinearReturnOutputType<uint8_t, uint16_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint8_t, uint16_t,   800, 10>));
+
+  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1230, 100, interpolateLinearReturnOutputType<uint8_t, uint32_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1393, 10>)); // slower than float
+
+  RUN_TEST((test_interpolateLinear<uint16_t, uint8_t,  1220, 50, interpolateLinearReturnOutputType<uint16_t, uint8_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint8_t,   800, 10>));
+
+  RUN_TEST((test_interpolateLinear<uint16_t, uint16_t, 1270, 100, interpolateLinearReturnOutputType<uint16_t, uint16_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint16_t,  800, 10>));
+
+  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1260, 100, interpolateLinearReturnOutputType<uint16_t, uint32_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1417, 10>)); // slower than float
+
+  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1290, 50, interpolateLinearReturnOutputType<uint32_t, uint8_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1386, 10>)); // slower than float
+
+  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1290, 50, interpolateLinearReturnOutputType<uint32_t, uint16_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1400, 10>)); // slower than float
+
+  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1290, 100, interpolateLinearReturnOutputType<uint32_t, uint32_t, float>>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1456, 10>)); // slower than float
   RUN_TEST(test_interpolateLinearTable);
   RUN_TEST(test_interpolateBilinear);
   RUN_TEST(test_interpolateBilinearTable);
