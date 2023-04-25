@@ -16,10 +16,13 @@
 
 #include "Interpolate.h"
 
+#define max(a,b) ((a)>(b)?(a):(b))
+
 template<typename SlopeType, uint8_t slopeShift = 0, typename InputType, typename OutputType>
 SlopeType interpolateLinearFixedSigned(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
 {
-  static_assert(sizeof(SlopeType) * 8 >= sizeof(OutputType) * 8 + slopeShift, "SlopeType too small");
+  // SlopeType needs to be big enough to handle OutputType / InputType
+  static_assert(sizeof(SlopeType) * 8 >= max(sizeof(OutputType) * 8 + slopeShift, sizeof(InputType) * 8), "SlopeType too small");
 
   // Shift for fixed-point math
   constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
@@ -31,7 +34,8 @@ SlopeType interpolateLinearFixedSigned(InputType input, InputType inputLow, Inpu
 template<typename SlopeType, uint8_t slopeShift = 0, typename InputType, typename OutputType>
 SlopeType interpolateLinearFixedUnsigned(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
 {
-  static_assert(sizeof(SlopeType) * 8 >= sizeof(OutputType) * 8 + slopeShift, "SlopeType too small");
+  // SlopeType needs to be big enough to handle OutputType / InputType
+  static_assert(sizeof(SlopeType) * 8 >= max(sizeof(OutputType) * 8 + slopeShift, sizeof(InputType) * 8), "SlopeType too small");
 
   // Shift for fixed-point math
   constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
@@ -52,8 +56,35 @@ SlopeType interpolateLinearFixedUnsigned(InputType input, InputType inputLow, In
   }
 }
 
+#undef max
+
 template<>
-uint8_t interpolateLinear<uint8_t, uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1)
+uint8_t interpolateLinear<uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1)
 {
-  return interpolateLinearFixedUnsigned<uint16_t, 8>(input, inputLow, inputHigh, output0, output1);
+  return static_cast<uint8_t>(interpolateLinearFixedUnsigned<uint16_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
+uint16_t interpolateLinear<uint8_t, uint16_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint16_t output0, uint16_t output1)
+{
+  return static_cast<uint16_t>(interpolateLinearFixedUnsigned<uint32_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
+uint16_t interpolateLinear<uint16_t, uint16_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint16_t output0, uint16_t output1)
+{
+  return static_cast<uint16_t>(interpolateLinearFixedUnsigned<uint32_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
+uint32_t interpolateLinear<uint16_t, uint32_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint32_t output0, uint32_t output1)
+{
+  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+
+template<>
+uint32_t interpolateLinear<uint32_t, uint32_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint32_t output0, uint32_t output1)
+{
+  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
 }

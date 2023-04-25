@@ -117,16 +117,29 @@ FindOnScaleResult findOnScale(T input, ScaleArrayType start, size_t length, size
   return FindOnScaleResult::OffScaleLow;
 }
 
-// Base case for float, double, or custom types that support + - / *
-template<typename SlopeType, typename InputType, typename OutputType>
+// Base case for float, double, or signed custom types that support + - / *
+template<typename InputType, typename OutputType, typename SlopeType = OutputType>
 SlopeType interpolateLinear(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
 {
-    SlopeType slope = static_cast<SlopeType>(output1 - output0) / static_cast<SlopeType>(inputHigh - inputLow);
-    return slope * static_cast<SlopeType>(input - inputLow) + static_cast<SlopeType>(output0);
+  SlopeType slope = static_cast<SlopeType>(output1 - output0) / static_cast<SlopeType>(inputHigh - inputLow);
+  return slope * static_cast<SlopeType>(input - inputLow) + static_cast<SlopeType>(output0);
 }
 
 template<>
-uint8_t interpolateLinear<uint8_t, uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
+uint8_t interpolateLinear<uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
+
+template<>
+uint16_t interpolateLinear<uint8_t, uint16_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint16_t output0, uint16_t output1);
+
+template<>
+uint16_t interpolateLinear<uint16_t, uint16_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint16_t output0, uint16_t output1);
+
+template<>
+uint32_t interpolateLinear<uint16_t, uint32_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint32_t output0, uint32_t output1);
+
+template<>
+uint32_t interpolateLinear<uint32_t, uint32_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint32_t output0, uint32_t output1);
+
 
 template<typename SlopeType = float,
   typename InputType, typename InputArray, typename OutputArray>
@@ -143,7 +156,7 @@ SlopeType interpolateLinearTable(InputType input, size_t length, InputArray inpu
     auto output0 = outputArray[index];
     auto output1 = outputArray[index + 1];
 
-    return interpolateLinear<SlopeType>(input, inputLow, inputHigh, output0, output1);
+    return interpolateLinear<InputType, decltype(output0), SlopeType>(input, inputLow, inputHigh, output0, output1);
   }
   else
   {
@@ -263,7 +276,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output0 = outputArray[output0Index];
     Z output1 = outputArray[output1Index];
 
-    return interpolateLinear<SlopeType>(y, yLow, yHigh, output0, output1);
+    return interpolateLinear<Y, Z, SlopeType>(y, yLow, yHigh, output0, output1);
   }
   else if (FindOnScaleResult::InBetween == xResult)
   {
@@ -274,7 +287,7 @@ ReturnType interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
     Z output0 = outputArray[output0Index];
     Z output1 = outputArray[output0Index + 1];
 
-    return interpolateLinear<SlopeType>(x, xLow, xHigh, output0, output1);
+    return interpolateLinear<X, Z, SlopeType>(x, xLow, xHigh, output0, output1);
   }
   else
   {
