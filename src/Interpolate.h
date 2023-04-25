@@ -131,12 +131,57 @@ SlopeType interpolateLinearUnsigned(InputType input, InputType inputLow, InputTy
 {
   if (output1 > output0)
   {
-    return interpolateLinear<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1);
+    SlopeType slope = static_cast<SlopeType>(output1 - output0) / static_cast<SlopeType>(inputHigh - inputLow);
+    return static_cast<SlopeType>(slope * static_cast<SlopeType>(input - inputLow) + static_cast<SlopeType>(output0));
   }
-
-  SlopeType slope = static_cast<SlopeType>(output0 - output1) / static_cast<SlopeType>(inputHigh - inputLow);
-  return static_cast<SlopeType>(output0) - slope * static_cast<SlopeType>(input - inputLow);
+  else 
+  {
+    SlopeType slope = static_cast<SlopeType>(output0 - output1) / static_cast<SlopeType>(inputHigh - inputLow);
+    return static_cast<SlopeType>(output0) - slope * static_cast<SlopeType>(input - inputLow);
+  }
 }
+
+#define max(a,b) ((a)>(b)?(a):(b))
+
+template<typename SlopeType, uint8_t slopeShift = 0, typename InputType, typename OutputType>
+SlopeType interpolateLinearFixedSigned(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+{
+  // SlopeType needs to be big enough to handle OutputType / InputType
+  static_assert(sizeof(SlopeType) * 8 >= max(sizeof(OutputType) * 8 + slopeShift, sizeof(InputType) * 8), "SlopeType too small");
+
+  // Shift for fixed-point math
+  constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
+
+  SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+  return (slope * static_cast<SlopeType>(input - inputLow)) / static_cast<SlopeType>(shiftMul) + static_cast<SlopeType>(output0);
+}
+
+template<typename SlopeType, uint8_t slopeShift = 0, typename InputType, typename OutputType>
+SlopeType interpolateLinearFixedUnsigned(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+{
+  // SlopeType needs to be big enough to handle OutputType / InputType
+  static_assert(sizeof(SlopeType) * 8 >= max(sizeof(OutputType) * 8 + slopeShift, sizeof(InputType) * 8), "SlopeType too small");
+
+  // Shift for fixed-point math
+  constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
+
+  // Add 1 to the highest digit that we're thowing away to round instead of truncating
+  constexpr SlopeType round = slopeShift > 0 ? static_cast<SlopeType>(1ul << (slopeShift - 1)) : 0;
+
+  if (output1 > output0)
+  {
+    SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+    return (slope * static_cast<SlopeType>(input - inputLow) + round) / static_cast<SlopeType>(shiftMul) + static_cast<SlopeType>(output0);
+  }
+  else
+  {
+    // Assume we're dealing with unsigned fixed-point math
+    SlopeType slope = (static_cast<SlopeType>(output0 - output1) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
+    return static_cast<SlopeType>(output0) - (slope * static_cast<SlopeType>(input - inputLow) + round) / static_cast<SlopeType>(shiftMul);
+  }
+}
+
+#undef max
 
 template<>
 uint8_t interpolateLinear<uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
