@@ -31,6 +31,7 @@ uint16_t interpolateLinear<uint8_t, uint16_t>(uint8_t input, uint8_t inputLow, u
 template<>
 uint32_t interpolateLinear<uint8_t, uint32_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint32_t output0, uint32_t output1)
 {
+  // Floating point is faster than fixed point
   return static_cast<uint32_t>(interpolateLinearUnsigned<uint8_t, uint32_t, float>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }
 
@@ -49,23 +50,27 @@ uint16_t interpolateLinear<uint16_t, uint16_t>(uint16_t input, uint16_t inputLow
 template<>
 uint32_t interpolateLinear<uint16_t, uint32_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint32_t output0, uint32_t output1)
 {
-  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+  // Floating point is faster than fixed point
+  return static_cast<uint32_t>(interpolateLinearUnsigned<uint16_t, uint32_t, float>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }
 
 template<>
 uint8_t interpolateLinear<uint32_t, uint8_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint8_t output0, uint8_t output1)
 {
-  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+  // Floating point is faster than fixed point
+  return static_cast<uint8_t>(interpolateLinearUnsigned<uint32_t, uint8_t, float>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }
 
 template<>
 uint16_t interpolateLinear<uint32_t, uint16_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint16_t output0, uint16_t output1)
 {
-  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+  // Floating point is faster than fixed point
+  return static_cast<uint16_t>(interpolateLinearUnsigned<uint32_t, uint16_t, float>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }
 
 template<>
 uint32_t interpolateLinear<uint32_t, uint32_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint32_t output0, uint32_t output1)
 {
-  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+  // Floating point is faster than fixed point
+  return static_cast<uint32_t>(interpolateLinearUnsigned<uint32_t, uint32_t, float>(input, inputLow, inputHigh, output0, output1) + 0.5);
 }

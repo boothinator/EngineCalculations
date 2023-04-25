@@ -426,9 +426,9 @@ void setup() {
   RUN_TEST((test_interpolateLinear<uint8_t, uint16_t,  1220, 50, interpolateLinearReturnOutputType<uint8_t, uint16_t, float>>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint16_t,   800, 10>));
 
-  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1230, 100>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1230, 100, interpolateLinearReturnOutputType<uint8_t, uint32_t, float>>));
   RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1393, 10, interpolateLinearFixedReturnOutputType<uint8_t, uint32_t, uint64_t, 8>>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t,  1230, 100>));
 
   RUN_TEST((test_interpolateLinear<uint16_t, uint8_t,  1220, 50, interpolateLinearReturnOutputType<uint16_t, uint8_t, float>>));
   RUN_TEST((test_interpolateLinear<uint16_t, uint8_t,   800, 10>));
@@ -437,16 +437,20 @@ void setup() {
   RUN_TEST((test_interpolateLinear<uint16_t, uint16_t,  800, 10>));
 
   RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1260, 100, interpolateLinearReturnOutputType<uint16_t, uint32_t, float>>));
-  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1417, 10>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1417, 10, interpolateLinearFixedReturnOutputType<uint16_t, uint32_t, uint64_t, 8>>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1260, 100>));
 
   RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1290, 50, interpolateLinearReturnOutputType<uint32_t, uint8_t, float>>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1386, 10>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1386, 10, interpolateLinearFixedReturnOutputType<uint32_t, uint8_t, uint64_t, 8>>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t,  1290, 50>));
 
   RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1290, 50, interpolateLinearReturnOutputType<uint32_t, uint16_t, float>>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1400, 10>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1400, 10, interpolateLinearFixedReturnOutputType<uint32_t, uint16_t, uint64_t, 8>>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1290, 50>));
 
   RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1290, 100, interpolateLinearReturnOutputType<uint32_t, uint32_t, float>>));
-  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1456, 10>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1456, 10, interpolateLinearFixedReturnOutputType<uint32_t, uint32_t, uint64_t, 8>>)); // fixed point slower than float
+  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1290, 100>));
 
   RUN_TEST(test_interpolateLinearTable);
   RUN_TEST(test_interpolateBilinear);
