@@ -110,16 +110,17 @@ void test_interpolateLinearFloat()
   TEST_ASSERT_UINT16_WITHIN(10, 1043, TIME_DIFF);
 }
 
+template<typename InputType, typename OutputType, int expectedTicks, int ticksWithin>
 void test_interpolateLinear()
 {
-  volatile uint8_t input;
-  volatile uint8_t inputLow;
-  volatile uint8_t inputHigh;
-  volatile uint8_t outputLow;
-  volatile uint8_t outputHigh;
+  volatile InputType input;
+  volatile InputType inputLow;
+  volatile InputType inputHigh;
+  volatile OutputType outputLow;
+  volatile OutputType outputHigh;
 
-  uint32_t expected;
-  volatile uint32_t actual;
+  OutputType expected;
+  volatile OutputType actual;
 
   inputLow = 0;
   inputHigh = 127;
@@ -130,10 +131,10 @@ void test_interpolateLinear()
   expected = 94; // 94.25197
 
   TIME_START
-  actual = interpolateLinear<uint8_t>(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
-  TEST_ASSERT_UINT16_WITHIN(10, 300, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
 
   inputLow = 0;
   inputHigh = 127;
@@ -143,10 +144,10 @@ void test_interpolateLinear()
   input = 64;
   expected = 94; // 94.25197
   TIME_START
-  actual = interpolateLinear<uint8_t>(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
-  TEST_ASSERT_UINT16_WITHIN(10, 300, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
 
   inputLow = 0;
   inputHigh = 127;
@@ -157,10 +158,10 @@ void test_interpolateLinear()
   expected = 90; // 89.76378
 
   TIME_START
-  actual = interpolateLinear<uint8_t>(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
-  TEST_ASSERT_UINT16_WITHIN(10, 300, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
 
   inputLow = 0;
   inputHigh = 127;
@@ -170,10 +171,10 @@ void test_interpolateLinear()
   input = 67;
   expected = 90; // 89.76378
   TIME_START
-  actual = interpolateLinear<uint8_t>(input, inputLow, inputHigh, outputLow, outputHigh);
+  actual = interpolateLinear(input, inputLow, inputHigh, outputLow, outputHigh);
   TIME_END
   TEST_ASSERT_EQUAL(expected, actual);
-  TEST_ASSERT_UINT16_WITHIN(10, 300, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
 }
 
 void test_interpolateLinearTable()
@@ -407,7 +408,15 @@ void setup() {
 #endif
 
   RUN_TEST(test_interpolateLinearFloat);
-  RUN_TEST(test_interpolateLinear);
+  RUN_TEST((test_interpolateLinear<uint8_t, uint8_t, 300, 10>));
+  RUN_TEST((test_interpolateLinear<uint8_t, uint16_t, 800, 10>));
+  RUN_TEST((test_interpolateLinear<uint8_t, uint32_t, 1393, 10>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint8_t, 800, 10>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint16_t, 800, 10>));
+  RUN_TEST((test_interpolateLinear<uint16_t, uint32_t, 1417, 10>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint8_t, 1386, 10>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint16_t, 1400, 10>));
+  RUN_TEST((test_interpolateLinear<uint32_t, uint32_t, 1456, 10>));
   RUN_TEST(test_interpolateLinearTable);
   RUN_TEST(test_interpolateBilinear);
   RUN_TEST(test_interpolateBilinearTable);

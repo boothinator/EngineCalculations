@@ -71,6 +71,18 @@ uint16_t interpolateLinear<uint8_t, uint16_t>(uint8_t input, uint8_t inputLow, u
 }
 
 template<>
+uint32_t interpolateLinear<uint8_t, uint32_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint32_t output0, uint32_t output1)
+{
+  return static_cast<uint16_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
+uint8_t interpolateLinear<uint16_t, uint8_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint8_t output0, uint8_t output1)
+{
+  return static_cast<uint16_t>(interpolateLinearFixedUnsigned<uint32_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
 uint16_t interpolateLinear<uint16_t, uint16_t>(uint16_t input, uint16_t inputLow, uint16_t inputHigh, uint16_t output0, uint16_t output1)
 {
   return static_cast<uint16_t>(interpolateLinearFixedUnsigned<uint32_t, 8>(input, inputLow, inputHigh, output0, output1));
@@ -82,6 +94,17 @@ uint32_t interpolateLinear<uint16_t, uint32_t>(uint16_t input, uint16_t inputLow
   return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
 }
 
+template<>
+uint8_t interpolateLinear<uint32_t, uint8_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint8_t output0, uint8_t output1)
+{
+  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
+
+template<>
+uint16_t interpolateLinear<uint32_t, uint16_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint16_t output0, uint16_t output1)
+{
+  return static_cast<uint32_t>(interpolateLinearFixedUnsigned<uint64_t, 8>(input, inputLow, inputHigh, output0, output1));
+}
 
 template<>
 uint32_t interpolateLinear<uint32_t, uint32_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint32_t output0, uint32_t output1)
