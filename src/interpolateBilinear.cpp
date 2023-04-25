@@ -1,4 +1,4 @@
-// Engine Calculations
+// Interpolate
 // Copyright (C) 2023  Joshua Booth
 
 // This program is free software: you can redistribute it and/or modify
@@ -14,18 +14,4 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef ENGINE_CALCULATIONS_H_
-#define ENGINE_CALCULATIONS_H_
-
-#pragma once
-
-#include "EngineSpeed.h"
-#include "Injection.h"
-#include "Load.h"
-#include "Events.h"
-#include "interpolateLinear.h"
 #include "interpolateBilinear.h"
-
-bool areEngineCalculationsConfigured();
-
-#endif
