@@ -128,9 +128,6 @@ SlopeType interpolateLinear(InputType input, InputType inputLow, InputType input
 template<>
 uint8_t interpolateLinear<uint8_t, uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
 
-template<>
-float interpolateLinear<float, uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1);
-
 template<typename SlopeType = float,
   typename InputType, typename InputArray, typename OutputArray>
 SlopeType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)

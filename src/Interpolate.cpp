@@ -36,16 +36,19 @@ SlopeType interpolateLinearFixedUnsigned(InputType input, InputType inputLow, In
   // Shift for fixed-point math
   constexpr SlopeType shiftMul = static_cast<SlopeType>(1ul << slopeShift);
 
+  // Add 1 to the highest digit that we're thowing away to round instead of truncating
+  constexpr SlopeType round = slopeShift > 0 ? static_cast<SlopeType>(1ul << (slopeShift - 1)) : 0;
+
   if (output1 > output0)
   {
     SlopeType slope = (static_cast<SlopeType>(output1 - output0) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
-    return (slope * static_cast<SlopeType>(input - inputLow)) / static_cast<SlopeType>(shiftMul) + static_cast<SlopeType>(output0);
+    return (slope * static_cast<SlopeType>(input - inputLow) + round) / static_cast<SlopeType>(shiftMul) + static_cast<SlopeType>(output0);
   }
   else
   {
     // Assume we're dealing with unsigned fixed-point math
     SlopeType slope = (static_cast<SlopeType>(output0 - output1) * shiftMul) / static_cast<SlopeType>(inputHigh - inputLow);
-    return static_cast<SlopeType>(output0) - (slope * static_cast<SlopeType>(input - inputLow)) / static_cast<SlopeType>(shiftMul);
+    return static_cast<SlopeType>(output0) - (slope * static_cast<SlopeType>(input - inputLow) + round) / static_cast<SlopeType>(shiftMul);
   }
 }
 
@@ -54,27 +57,3 @@ uint8_t interpolateLinear<uint8_t, uint8_t, uint8_t>(uint8_t input, uint8_t inpu
 {
   return interpolateLinearFixedUnsigned<uint16_t, 8>(input, inputLow, inputHigh, output0, output1);
 }
-
-template<>
-float interpolateLinear<float, uint8_t, uint8_t>(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1)
-{
-  return interpolateLinearFixedUnsigned<float>(input, inputLow, inputHigh, output0, output1);
-}
-
-/*
-uint8_t interpolateLinear(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1)
-{
-  return interpolateLinearFixedUnsigned<uint32_t, 8>(input, inputLow, inputHigh, output0, output1);
-}
-
-uint8_t interpolateLinearFloat(uint8_t input, uint8_t inputLow, uint8_t inputHigh, uint8_t output0, uint8_t output1)
-{
-  return interpolateLinearFixedUnsigned<float>(input, inputLow, inputHigh, output0, output1);
-}
-
-float interpolateLinear(float input, float inputLow, float inputHigh, float output0, float output1)
-{
-  float slope = (output1 - output0) / (inputHigh - inputLow);
-  return slope * (input - inputLow) + output0;
-}
-*/
