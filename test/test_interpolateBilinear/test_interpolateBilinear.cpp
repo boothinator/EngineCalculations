@@ -46,7 +46,7 @@ uint16_t start, end;
 
 #endif
 
-void test_interpolateBilinear()
+void test_interpolateBilinearXFirstYFirst()
 {
   volatile uint8_t x, x0, x1;
   volatile uint8_t y, y0, y1;
@@ -148,6 +148,58 @@ void test_interpolateBilinear()
   //TEST_ASSERT_NOT_EQUAL_MESSAGE(expected, actual, "Y First DeltaXMulZ should be too small for result");
 }
 
+template<typename X, typename Y, typename Z, int expectedTicks, int ticksWithin,
+  Z (*intBilin)(X, X, X, Y, Y, Y, Z, Z, Z, Z) = interpolateBilinear<X, Y, Z>>
+void test_interpolateBilinear()
+{
+  volatile X x, x0, x1;
+  volatile Y y, y0, y1;
+  volatile Z z00, z10;
+  volatile Z z01, z11;
+  Z expected;
+  volatile Z actual;
+
+  x0 = 0;
+  x1 = 255;
+  y0 = 0;
+  y1 = 255;
+
+  z00 = 0;
+  z10 = 255;
+  z01 = 127;
+  z11 = 127;
+
+  x = 127;
+  y = 127;
+  expected = 127;
+
+  TIME_START
+  actual = intBilin(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TIME_END
+  TEST_ASSERT_EQUAL(expected, actual);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
+
+  x = 63;
+  y = 127;
+  expected = 95;
+
+  TIME_START
+  actual = intBilin(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TIME_END
+  TEST_ASSERT_EQUAL(expected, actual);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
+
+  x = 63;
+  y = 63;
+  expected = 79;
+
+  TIME_START
+  actual = intBilin(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  TIME_END
+  TEST_ASSERT_EQUAL(expected, actual);
+  TEST_ASSERT_UINT16_WITHIN(ticksWithin, expectedTicks, TIME_DIFF);
+}
+
 void test_interpolateBilinearTable()
 {
   const uint8_t xScale[] = {63, 127, 191};
@@ -245,16 +297,10 @@ void test_interpolateBilinearTable()
   TEST_ASSERT_EQUAL_FLOAT_MESSAGE(expected, actual, "Interpolate off scale y high");
 }
 
-template<typename InputType, typename OutputType, typename SlopeType>
-OutputType interpolateLinearReturnOutputType(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
+template<typename X, typename Y, typename Z>
+Z interpolateBilinearFloat(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
-  return static_cast<OutputType>(interpolateLinearUnsigned<InputType, OutputType, SlopeType>(input, inputLow, inputHigh, output0, output1) + 0.5);
-}
-
-template<typename InputType, typename OutputType, typename SlopeType, uint8_t slopeShift>
-OutputType interpolateLinearFixedReturnOutputType(InputType input, InputType inputLow, InputType inputHigh, OutputType output0, OutputType output1)
-{
-  return static_cast<OutputType>(interpolateLinearFixedUnsigned<SlopeType, slopeShift, InputType, OutputType>(input, inputLow, inputHigh, output0, output1));
+  return static_cast<Z>(interpolateBilinearXFirst<float, float, float>(x, x0, x1, y, y0, y1, z00, z10, z01, z11) + 0.5);
 }
 
 void setup() {
@@ -271,7 +317,23 @@ void setup() {
   TCCR1B = 1;
 #endif
 
-  RUN_TEST(test_interpolateBilinear);
+  RUN_TEST(test_interpolateBilinearXFirstYFirst);
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint8_t, 10, 910>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint8_t, 10, 910, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 10, 1030>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 10, 1030, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 10, 910>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 10, 910, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 10, 1452>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 10, 1452, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 10, 910>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 10, 910, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint16_t, 10, 1572>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint16_t, 10, 1572, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint8_t, 10, 1522>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint8_t, 10, 1522, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint16_t, 10, 1534>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint16_t, 10, 1534, interpolateBilinearFloat>));
   RUN_TEST(test_interpolateBilinearTable);
 
   UNITY_END(); // stop unit testing
