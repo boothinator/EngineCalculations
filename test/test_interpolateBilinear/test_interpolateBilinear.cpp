@@ -319,28 +319,34 @@ void setup() {
 
   RUN_TEST(test_interpolateBilinearXFirstYFirst);
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint8_t, 895, 10>));
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint8_t, 2552, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint8_t, 2552, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 1030, 10>));
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 2573, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 2573, 150, interpolateBilinearFloat>));
+
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 3332, 30>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 2573, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 808, 30>));
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 2545, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 2545, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 1435, 30>));
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 2502, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 2502, 150, interpolateBilinearFloat>));
+
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 3346, 30>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 2550, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 800, 10>));
-  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 2484, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 2484, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint16_t, 1572, 30>));
-  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint16_t, 2508, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint16_t, 2508, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint8_t, 1522, 30>));
-  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint8_t, 2480, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint8_t, 2480, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint16_t, 1534, 30>));
-  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint16_t, 2502, 100, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint16_t, uint16_t, uint16_t, 2502, 150, interpolateBilinearFloat>));
   RUN_TEST(test_interpolateBilinearTable);
 
   UNITY_END(); // stop unit testing
