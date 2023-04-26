@@ -191,7 +191,7 @@ void test_interpolateLinearTable()
 
   input = 63;
   expected = 94;
-  actual = interpolateLinearTable(input, length, inputScale, outputArray);
+  actual = interpolateLinearTable<uint8_t>(input, length, inputScale, outputArray);
   TEST_ASSERT_EQUAL(expected, actual);
 }
 

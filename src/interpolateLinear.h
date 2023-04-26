@@ -118,9 +118,8 @@ template<>
 uint32_t interpolateLinear<uint32_t, uint32_t>(uint32_t input, uint32_t inputLow, uint32_t inputHigh, uint32_t output0, uint32_t output1);
 
 
-template<typename SlopeType = float,
-  typename InputType, typename InputArray, typename OutputArray>
-SlopeType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)
+template<typename OutputType, typename InputType, typename InputArray, typename OutputArray>
+OutputType interpolateLinearTable(InputType input, size_t length, InputArray inputScale, OutputArray outputArray)
 {
   size_t index;
   InputType inputLow, inputHigh;
@@ -130,14 +129,14 @@ SlopeType interpolateLinearTable(InputType input, size_t length, InputArray inpu
   // Need to interpolate
   if (FindOnScaleResult::InBetween == result)
   {
-    auto output0 = outputArray[index];
-    auto output1 = outputArray[index + 1];
+    OutputType output0 = outputArray[index];
+    OutputType output1 = outputArray[index + 1];
 
-    return interpolateLinear<InputType, decltype(output0), SlopeType>(input, inputLow, inputHigh, output0, output1);
+    return interpolateLinear<InputType, OutputType>(input, inputLow, inputHigh, output0, output1);
   }
   else
   {
-    return static_cast<SlopeType>(outputArray[index]);
+    return outputArray[index];
   }
 }
 
