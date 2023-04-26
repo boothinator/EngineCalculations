@@ -25,9 +25,27 @@
 #include "scale.h"
 #include "interpolateLinear.h"
 
-template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
-  typename X = float, typename Y = float, typename Z = float>
-ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+template<typename T>
+inline T divRound(T num, T denom)
+{
+  return num/denom;
+}
+
+template<>
+uint8_t divRound(uint8_t num, uint8_t denom);
+
+template<>
+uint16_t divRound(uint16_t num, uint16_t denom);
+
+template<>
+uint32_t divRound(uint32_t num, uint32_t denom);
+
+template<>
+uint64_t divRound(uint64_t num, uint64_t denom);
+
+template<typename DeltaXMulZ, typename DeltaYMulZ, typename DivType,
+  typename X, typename Y, typename Z>
+DivType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Generally: y_interpolated = [ y0 * (x1 - x) + y1 * (x - x0) ] / (x1 - x0)
 
@@ -35,61 +53,70 @@ ReturnType interpolateBilinearXFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z 
   // Note: z subscripts are x,y. Ex: z01 is at x = 0, y = 1
 
   // Upcast so we don't overflow fixed-point math when we multiply
-  ReturnType deltaX = static_cast<ReturnType>(x1 - x0);
+  DivType deltaX = static_cast<DivType>(x1 - x0);
   DeltaXMulZ deltaX0 = static_cast<DeltaXMulZ>(x - x0);
   DeltaXMulZ deltaX1 = static_cast<DeltaXMulZ>(x1 - x);
 
   // z_row0_interpolated = [ z00 * (x1 - x) + z10 * (x - x0) ] / (x1 - x0)
-  DeltaYMulZ z_row0_num = static_cast<DeltaYMulZ>(static_cast<DeltaXMulZ>(z00) * deltaX1 + static_cast<DeltaXMulZ>(z10) * deltaX0);
+  DivType z_row0_num = static_cast<DivType>(static_cast<DeltaXMulZ>(z00) * deltaX1 + static_cast<DeltaXMulZ>(z10) * deltaX0);
 
   // z_row1_interpolated = [ z01 * (x1 - x) + z11 * (x - x0) ] / (x1 - x0)
-  DeltaYMulZ z_row1_num = static_cast<DeltaYMulZ>(static_cast<DeltaXMulZ>(z01) * deltaX1 + static_cast<DeltaXMulZ>(z11) * deltaX0);
+  DivType z_row1_num = static_cast<DivType>(static_cast<DeltaXMulZ>(z01) * deltaX1 + static_cast<DeltaXMulZ>(z11) * deltaX0);
 
   // Denominators are the same
-  ReturnType z_row_denom = deltaX;
+  DivType z_row_denom = deltaX;
 
   // Upcast so we don't overflow fixed-point math when we multiply
-  ReturnType deltaY = static_cast<ReturnType>(y1 - y0);
+  DivType deltaY = static_cast<DivType>(y1 - y0);
   DeltaYMulZ deltaY0 = static_cast<DeltaYMulZ>(y - y0);
   DeltaYMulZ deltaY1 = static_cast<DeltaYMulZ>(y1 - y);
 
   // z_interpolated = [ z_row0_interpolated * (y1 - y) + z_row1_interpolated * (y - y0) ] / (y1 - y0)
-  DeltaYMulZ z_num = z_row0_num * deltaY1 + z_row1_num * deltaY0;
+  DivType z_num = z_row0_num * deltaY1 + z_row1_num * deltaY0;
 
   // Need to include the Z row denomizator
-  ReturnType z_denom = deltaY * z_row_denom;
+  DivType z_denom = deltaY * z_row_denom;
   
-  return static_cast<ReturnType>(z_num) / z_denom;
+  return divRound(z_num, z_denom);
 }
 
-template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
-  typename X = float, typename Y = float, typename Z = float>
-ReturnType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+template<typename DeltaXMulZ, typename DeltaYMulZ, typename DivType,
+  typename X, typename Y, typename Z>
+DivType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
   // Rotate 90 degrees
-  return interpolateBilinearXFirst<ReturnType, DeltaYMulZ, DeltaXMulZ>(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
+  return interpolateBilinearXFirst<DeltaYMulZ, DeltaXMulZ, DivType>(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
 }
 
-/*
-For fixed point math, DeltaXMulZ needs to be big enough to hold any deltaX * Z, and DeltaYMulZ needs
-to be big enough to hold any deltaY * Z. The larger of the two must also be able to hold 
-deltaX * deltaY * z
- */
-template<typename ReturnType = float, typename DeltaXMulZ = float, typename DeltaYMulZ = float,
-  typename X = float, typename Y = float, typename Z = float>
-ReturnType interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+template<typename X, typename Y, typename Z>
+Z interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
-  if (sizeof(DeltaYMulZ) >= sizeof(DeltaXMulZ))
-  {
-    return interpolateBilinearXFirst<ReturnType, DeltaXMulZ, DeltaYMulZ>(
-      x, x0, x1, y, y0, y1, z00, z10, z01, z11);
-  }
-  else
-  {
-    return interpolateBilinearYFirst<ReturnType, DeltaXMulZ, DeltaYMulZ>(
-      x, x0, x1, y, y0, y1, z00, z10, z01, z11);
-  }
+  return interpolateBilinearXFirst<Z, Z, Z>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
 }
+
+template<>
+uint8_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint8_t y, uint8_t y0, uint8_t y1, uint8_t z00, uint8_t z10, uint8_t z01, uint8_t z11);
+
+template<>
+uint16_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint8_t y, uint8_t y0, uint8_t y1, uint16_t z00, uint16_t z10, uint16_t z01, uint16_t z11);
+
+template<>
+uint8_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint8_t z00, uint8_t z10, uint8_t z01, uint8_t z11);
+
+template<>
+uint16_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint16_t z00, uint16_t z10, uint16_t z01, uint16_t z11);
+
+template<>
+uint8_t interpolateBilinear(uint16_t x, uint16_t x0, uint16_t x1, uint8_t y, uint8_t y0, uint8_t y1, uint8_t z00, uint8_t z10, uint8_t z01, uint8_t z11);
+
+template<>
+uint16_t interpolateBilinear(uint16_t x, uint16_t x0, uint16_t x1, uint8_t y, uint8_t y0, uint8_t y1, uint16_t z00, uint16_t z10, uint16_t z01, uint16_t z11);
+
+template<>
+uint8_t interpolateBilinear(uint16_t x, uint16_t x0, uint16_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint8_t z00, uint8_t z10, uint8_t z01, uint8_t z11);
+
+template<>
+uint16_t interpolateBilinear(uint16_t x, uint16_t x0, uint16_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint16_t z00, uint16_t z10, uint16_t z01, uint16_t z11);
 
 template<typename Z, typename X, typename Y, typename XArray, typename YArray, typename ZArray>
 Z interpolateBilinearTable(X x, Y y, size_t xLength, size_t yLength,
