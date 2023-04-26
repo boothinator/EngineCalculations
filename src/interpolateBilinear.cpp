@@ -56,12 +56,6 @@ uint16_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint8_t y, uint8
 }
 
 template<>
-uint32_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint8_t y, uint8_t y0, uint8_t y1, uint32_t z00, uint32_t z10, uint32_t z01, uint32_t z11)
-{
-  return interpolateBilinearXFirst<uint64_t, uint64_t, uint64_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
-}
-
-template<>
 uint8_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint8_t z00, uint8_t z10, uint8_t z01, uint8_t z11)
 {
   return interpolateBilinearXFirst<uint16_t, uint32_t, uint32_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
@@ -71,12 +65,6 @@ template<>
 uint16_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint16_t z00, uint16_t z10, uint16_t z01, uint16_t z11)
 {
   return interpolateBilinearXFirst<uint16_t, uint32_t, uint64_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
-}
-
-template<>
-uint32_t interpolateBilinear(uint8_t x, uint8_t x0, uint8_t x1, uint16_t y, uint16_t y0, uint16_t y1, uint32_t z00, uint32_t z10, uint32_t z01, uint32_t z11)
-{
-  return interpolateBilinearXFirst<uint64_t, uint64_t, uint64_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
 }
 
 template<>

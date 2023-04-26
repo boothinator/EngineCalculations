@@ -303,6 +303,12 @@ Z interpolateBilinearFloat(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01
   return static_cast<Z>(interpolateBilinearXFirst<float, float, float>(x, x0, x1, y, y0, y1, z00, z10, z01, z11) + 0.5);
 }
 
+template<typename X, typename Y, typename Z>
+Z interpolateBilinearUFixed64(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
+{
+  return static_cast<Z>(interpolateBilinearXFirst<uint64_t, uint64_t, uint64_t>(x, x0, x1, y, y0, y1, z00, z10, z01, z11));
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -324,7 +330,7 @@ void setup() {
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 1030, 10>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint16_t, 2573, 150, interpolateBilinearFloat>));
 
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 3332, 30>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 3332, 30, interpolateBilinearUFixed64>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 2573, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 808, 30>));
@@ -333,7 +339,7 @@ void setup() {
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 1435, 30>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint16_t, 2502, 150, interpolateBilinearFloat>));
 
-  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 3346, 30>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 3346, 30, interpolateBilinearUFixed64>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 2550, 150, interpolateBilinearFloat>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 800, 10>));
