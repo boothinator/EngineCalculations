@@ -16,6 +16,31 @@
 
 #include "interpolateBilinear.h"
 
+
+template<>
+float roundingFactor<uint8_t>()
+{
+  return 0.5;
+}
+
+template<>
+float roundingFactor<uint16_t>()
+{
+  return 0.5;
+}
+
+template<>
+float roundingFactor<uint32_t>()
+{
+  return 0.5;
+}
+
+template<>
+float roundingFactor<uint64_t>()
+{
+  return 0.5;
+}
+
 template<>
 uint8_t divRound(uint8_t num, uint8_t denom)
 {

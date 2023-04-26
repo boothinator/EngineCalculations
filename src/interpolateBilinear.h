@@ -88,10 +88,28 @@ DivType interpolateBilinearYFirst(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10
   return interpolateBilinearXFirst<DeltaYMulZ, DeltaXMulZ, DivType>(y, y0, y1, x, x0, x1, z00, z01, z10, z11);
 }
 
-template<typename X, typename Y, typename Z>
+template<typename T>
+float roundingFactor()
+{
+  return 0.0;
+}
+
+template<>
+float roundingFactor<uint8_t>();
+
+template<>
+float roundingFactor<uint16_t>();
+
+template<>
+float roundingFactor<uint32_t>();
+
+template<>
+float roundingFactor<uint64_t>();
+
+template<typename X, typename Y, typename Z, typename DeltaXMulZ = float, typename DeltaYMulZ = float, typename DivType = float>
 Z interpolateBilinear(X x, X x0, X x1, Y y, Y y0, Y y1, Z z00, Z z10, Z z01, Z z11)
 {
-  return interpolateBilinearXFirst<Z, Z, Z>(x, x0, x1, y, y0, y1, z00, z10, z01, z11);
+  return static_cast<Z>(interpolateBilinearXFirst<DeltaXMulZ, DeltaYMulZ, DivType>(x, x0, x1, y, y0, y1, z00, z10, z01, z11) + roundingFactor<Z>());
 }
 
 template<>

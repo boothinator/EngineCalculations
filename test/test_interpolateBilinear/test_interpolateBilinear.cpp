@@ -332,6 +332,7 @@ void setup() {
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 3332, 30, interpolateBilinearUFixed64>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 2573, 150, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint8_t, uint32_t, 2573, 150>));
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 808, 30>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint8_t, 2545, 150, interpolateBilinearFloat>));
@@ -341,6 +342,7 @@ void setup() {
 
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 3346, 30, interpolateBilinearUFixed64>));
   RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 2550, 150, interpolateBilinearFloat>));
+  RUN_TEST((test_interpolateBilinear<uint8_t, uint16_t, uint32_t, 2550, 150>));
 
   RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 800, 10>));
   RUN_TEST((test_interpolateBilinear<uint16_t, uint8_t, uint8_t, 2484, 150, interpolateBilinearFloat>));
