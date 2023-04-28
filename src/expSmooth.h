@@ -31,7 +31,7 @@ uint16_t expSmoothImpl(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMi
   return (static_cast<T>(cur) * alpha + static_cast<T>(prev) * oneMinusAlpha + roundingFactor) / alphaFactor;
 }
 
-template<uint8_t valueBits, uint8_t alphaFracBits>
+template<uint8_t valueBits = 10, uint8_t alphaFracBits = 6>
 uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusAlpha)
 {
   static_assert(valueBits + alphaFracBits <= 32);
