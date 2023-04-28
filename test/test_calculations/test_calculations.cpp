@@ -47,8 +47,8 @@ float getCrankSpeedDegreesPerTick(float rpm)
 
 uint16_t start, end;
 
-#define TIME_START {start = TCNT1;}
-#define TIME_END {end = TCNT1;}
+#define TIME_START {noInterrupts();start = TCNT1;}
+#define TIME_END {end = TCNT1;interrupts();}
 #define TIME_DIFF (end - start)
 
 #else
@@ -132,6 +132,36 @@ void test_load()
 #endif
 }
 
+template<uint8_t valueBits>
+void test_expSmooth(uint16_t cur, uint16_t prev, float alphaF, uint16_t ticks)
+{
+  static constexpr uint16_t alphaFactor = 1 << 6;
+  volatile uint16_t actual;
+  volatile uint16_t alpha16 = alphaF * alphaFactor;
+  volatile uint8_t alpha = static_cast<uint8_t>(alpha16);
+  volatile uint8_t oneMinusAlpha = static_cast<uint8_t>(alphaFactor - alpha16);
+  uint16_t start, end;
+
+  uint16_t expected = static_cast<uint16_t>((static_cast<float>(cur) * alpha + static_cast<float>(prev) * oneMinusAlpha)/alphaFactor + 0.5);
+
+  TIME_START
+  actual = expSmooth<valueBits, 6>(cur, prev, alpha, oneMinusAlpha);
+  TIME_END
+
+  TEST_ASSERT_EQUAL_UINT16(expected, actual);
+
+  TEST_ASSERT_UINT16_WITHIN(10, ticks, TIME_DIFF);
+}
+
+void test_expSmooth()
+{
+  volatile uint16_t cur = 800, prev = 900;
+
+  test_expSmooth<10>(cur, prev, 0.3, 66);
+  test_expSmooth<16>(cur, prev, 0.3, 78);
+  test_expSmooth<26>(cur, prev, 0.3, 127);
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -150,6 +180,7 @@ void setup() {
   RUN_TEST(test_getTicksFromAngle);
   RUN_TEST(test_calculateInjectionLength);
   RUN_TEST(test_load);
+  RUN_TEST(test_expSmooth);
 
   UNITY_END(); // stop unit testing
 }

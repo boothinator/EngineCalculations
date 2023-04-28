@@ -25,6 +25,7 @@
 #include "Events.h"
 #include "interpolateLinear.h"
 #include "interpolateBilinear.h"
+#include "expSmooth.h"
 
 bool areEngineCalculationsConfigured();
 
