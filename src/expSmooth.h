@@ -62,4 +62,6 @@ uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha)
   return expSmooth<valueBits, alphaFracBits>(cur, prev, alpha, (1u << alphaFracBits) - alpha);
 }
 
+uint8_t calculateAlphaFixed(float alphaFloat, uint8_t fractionBits);
+
 #endif
