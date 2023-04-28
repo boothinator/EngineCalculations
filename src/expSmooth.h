@@ -25,8 +25,8 @@
 template<typename T, uint8_t alphaFracBits>
 uint16_t expSmoothImpl(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusAlpha)
 {
-  static constexpr uint16_t alphaFactor = 1 << alphaFracBits;
-  static constexpr uint16_t roundingFactor = alphaFactor / 2;
+  static constexpr uint16_t alphaFactor = 1u << alphaFracBits;
+  static constexpr uint16_t roundingFactor = alphaFactor / 2u;
 
   return (static_cast<T>(cur) * alpha + static_cast<T>(prev) * oneMinusAlpha + roundingFactor) / alphaFactor;
 }
@@ -59,7 +59,7 @@ uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusA
 template<uint8_t valueBits = 10, uint8_t alphaFracBits = 6>
 uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha)
 {
-  return expSmooth<valueBits, alphaFracBits>(cur, prev, alpha, (1 << alphaFracBits) - alpha);
+  return expSmooth<valueBits, alphaFracBits>(cur, prev, alpha, (1u << alphaFracBits) - alpha);
 }
 
 #endif
