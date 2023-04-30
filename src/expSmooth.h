@@ -22,33 +22,39 @@
 #include <stdint.h>
 #include <avr/common.h>
 
-template<typename T, uint8_t alphaFracBits>
-uint16_t expSmoothImpl(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusAlpha)
+template<uint8_t alphaFracBits, typename TMul, typename TVal>
+TVal expSmoothImpl(TVal cur, TVal prev, uint8_t alpha, uint8_t oneMinusAlpha)
 {
-  static constexpr uint16_t alphaFactor = 1u << alphaFracBits;
-  static constexpr uint16_t roundingFactor = alphaFactor / 2u;
+  static constexpr TMul alphaFactor = 1u << alphaFracBits;
+  static constexpr TMul roundingFactor = alphaFactor / 2u;
 
-  return (static_cast<T>(cur) * alpha + static_cast<T>(prev) * oneMinusAlpha + roundingFactor) / alphaFactor;
+  return static_cast<TVal>(
+    (static_cast<TMul>(cur) * alpha + static_cast<TMul>(prev) * oneMinusAlpha + roundingFactor)
+    / alphaFactor);
 }
 
-template<uint8_t valueBits = 10, uint8_t alphaFracBits = 6>
-uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusAlpha)
+template<uint8_t alphaFracBits = 6, typename TVal, uint8_t valueBits = sizeof(TVal) * 8 - 6>
+TVal expSmooth(TVal cur, TVal prev, uint8_t alpha, uint8_t oneMinusAlpha)
 {
   static_assert(valueBits + alphaFracBits <= 32);
   
   if (valueBits + alphaFracBits <= 16)
   {
-    return expSmoothImpl<uint16_t, alphaFracBits>(cur, prev, alpha, oneMinusAlpha);
+    return expSmoothImpl<alphaFracBits, uint16_t>(cur, prev, alpha, oneMinusAlpha);
   }
 #ifdef __AVR_ARCH__
   else if (valueBits + alphaFracBits <= 24)
   {
-    return expSmoothImpl<__uint24, alphaFracBits>(cur, prev, alpha, oneMinusAlpha);
+    return expSmoothImpl<alphaFracBits, __uint24>(cur, prev, alpha, oneMinusAlpha);
   }
 #endif
   else if (valueBits + alphaFracBits <= 32)
   {
-    return expSmoothImpl<uint32_t, alphaFracBits>(cur, prev, alpha, oneMinusAlpha);
+    return expSmoothImpl<alphaFracBits, uint32_t>(cur, prev, alpha, oneMinusAlpha);
+  }
+  else if (valueBits + alphaFracBits <= 64)
+  {
+    return expSmoothImpl<alphaFracBits, uint64_t>(cur, prev, alpha, oneMinusAlpha);
   }
   else
   {
@@ -56,12 +62,12 @@ uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha, uint8_t oneMinusA
   }
 }
 
-template<uint8_t valueBits = 10, uint8_t alphaFracBits = 6>
-uint16_t expSmooth(uint16_t cur, uint16_t prev, uint8_t alpha)
+template<uint8_t alphaFracBits = 6, typename TVal, uint8_t valueBits = sizeof(TVal) * 8 - 6>
+TVal expSmooth(TVal cur, TVal prev, uint8_t alpha)
 {
-  return expSmooth<valueBits, alphaFracBits>(cur, prev, alpha, (1u << alphaFracBits) - alpha);
+  return expSmooth<alphaFracBits, TVal, valueBits>(cur, prev, alpha, (1u << alphaFracBits) - alpha);
 }
 
-uint8_t calculateAlphaFixed(float alphaFloat, uint8_t fractionBits);
+uint8_t calculateAlphaFixed(float alphaFloat, uint8_t fractionBits = 6u);
 
 #endif

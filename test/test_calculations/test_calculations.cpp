@@ -145,7 +145,7 @@ void test_expSmooth(uint16_t cur, uint16_t prev, float alphaF, uint16_t ticks)
   uint16_t expected = static_cast<uint16_t>((static_cast<float>(cur) * alpha + static_cast<float>(prev) * oneMinusAlpha)/alphaFactor + 0.5);
 
   TIME_START
-  actual = expSmooth<valueBits, 6>(cur, prev, alpha, oneMinusAlpha);
+  actual = expSmooth<6, uint16_t, valueBits>(cur, prev, alpha, oneMinusAlpha);
   TIME_END
 
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
