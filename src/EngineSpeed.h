@@ -36,7 +36,7 @@ ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTic
 
   angle_t angleDiff = angle - lastCrankEventAngle;
 
-  return static_cast<ticks_t>(inverseCrankSpeedTicksPerDegree * angleDiff + lastCrankEventTicks);
+  return static_cast<ticks_t>(inverseCrankSpeedTicksPerDegree * angleDiff) + lastCrankEventTicks;
 }
 
 template<typename angle_t, typename ticks_t>

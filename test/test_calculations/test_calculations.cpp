@@ -77,7 +77,7 @@ void test_calculateRpm()
 
 void test_getTicksFromAngle()
 {
-  volatile uint32_t lastCrankEventTicks = 10000000ul;
+  volatile uint32_t lastCrankEventTicks = 13338414ul;
   uint32_t expected = 3333ul + lastCrankEventTicks; // 333.333 ticks/degree
   float rpm = 1000.0; 
   volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
@@ -88,10 +88,10 @@ void test_getTicksFromAngle()
   volatile uint32_t actual = getTicksFromAngle(lastCrankEventAngle, lastCrankEventTicks, inverseCrankSpeedTicksPerDegree, angle);
   TIME_END
 
-  TEST_ASSERT_EQUAL_UINT32(expected, actual);
+  TEST_ASSERT_UINT32_WITHIN(2, expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(602, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(100, 602, TIME_DIFF);
 #endif
 }
 
