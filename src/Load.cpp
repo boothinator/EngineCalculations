@@ -21,9 +21,6 @@
 
 namespace
 {
-
-float loadFractionMultiplierCylSDegreePerGTick = 0.0;
-
 // NIST STP at 20 C and 101.325 kPa
 constexpr float airDensityAtNtpKgPerCubicMeter = 1.2041;
 
@@ -34,7 +31,7 @@ constexpr float airDensityAtNtpGramsPerCc =
 
 } // namespace
 
-void configureLoadCalculation(float ticksPerSecond, int cylindersPerAirflowSensor, float cylinderBoreCm, float cylinderStrokeCm)
+LoadFractionCalculator::LoadFractionCalculator(float ticksPerSecond, int cylindersPerAirflowSensor, float cylinderBoreCm, float cylinderStrokeCm)
 {
   float cylinderRadiusCm = cylinderBoreCm / 2.0;
   float cylinderAreaSqCm =  M_PI * cylinderRadiusCm * cylinderRadiusCm;
@@ -48,19 +45,19 @@ void configureLoadCalculation(float ticksPerSecond, int cylindersPerAirflowSenso
     * cylinderStrokeCm * cylinderAreaSqCm /* cc / stroke */
     * airDensityAtNtpGramsPerCc;
 
-  loadFractionMultiplierCylSDegreePerGTick =
+  _loadFractionMultiplierCylSDegreePerGTick =
     (1.0 / ticksPerSecond) /* seconds / tick */
     * (1.0 / cylinderAvgAirflowCylGPerDegree); /* degrees / g */
 }
 
-bool isLoadConfigured()
-{
-  return loadFractionMultiplierCylSDegreePerGTick > 0.0;
-}
-
-float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
+float LoadFractionCalculator::calculate(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
 {
   return airflowGramsPerSecond
     * inverseCrankSpeedTicksPerDegree
-    * loadFractionMultiplierCylSDegreePerGTick;
+    * _loadFractionMultiplierCylSDegreePerGTick;
+}
+
+float LoadFractionCalculator::operator() (float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
+{
+  return calculate(inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
 }

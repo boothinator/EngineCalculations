@@ -16,28 +16,20 @@
 
 #include "EngineSpeed.h"
 
-namespace {
-
-float calculateRpmMultiplierRevTicksPerDegreeMinute = 0.0;
-
-} // namespace
-
-void configureEngineSpeedCalculations(float ticksPerSecond)
+RpmCalculator::RpmCalculator(float ticksPerSecond)
 {
-  calculateRpmMultiplierRevTicksPerDegreeMinute =
+  _calculateRpmMultiplierRevTicksPerDegreeMinute =
     ticksPerSecond
     * ( 60.0 / 1.0 ) /* seconds/minute */
     * ( 1.0 / 360.0 ) /* rev/degree */;
 }
 
-bool isEngineSpeedConfigured()
+float RpmCalculator::calculate(float crankSpeedDegreesPerTick)
 {
-  return calculateRpmMultiplierRevTicksPerDegreeMinute > 0.0;
+  return _calculateRpmMultiplierRevTicksPerDegreeMinute * crankSpeedDegreesPerTick;
 }
 
-float calculateRpm(float crankSpeedDegreesPerTick)
+float RpmCalculator::operator() (float crankSpeedDegreesPerTick)
 {
-
-  return calculateRpmMultiplierRevTicksPerDegreeMinute * crankSpeedDegreesPerTick;
+  return calculate(crankSpeedDegreesPerTick);
 }
-

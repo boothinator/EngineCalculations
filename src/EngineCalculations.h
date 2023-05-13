@@ -27,6 +27,4 @@
 #include "interpolateBilinear.h"
 #include "expSmooth.h"
 
-bool areEngineCalculationsConfigured();
-
 #endif

@@ -19,10 +19,15 @@
 
 #pragma once
 
-void configureLoadCalculation(float ticksPerSecond, int cylindersPerAirflowSensor, float cylinderBoreCm, float cylinderStrokeCm);
+class LoadFractionCalculator
+{
+public:
+  LoadFractionCalculator(float ticksPerSecond, int cylindersPerAirflowSensor, float cylinderBoreCm, float cylinderStrokeCm);
 
-bool isLoadConfigured();
-
-float calculateLoadFraction(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+  float calculate(float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+  float operator() (float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+private:
+  float _loadFractionMultiplierCylSDegreePerGTick;
+};
 
 #endif

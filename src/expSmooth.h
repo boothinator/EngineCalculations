@@ -20,7 +20,6 @@
 #pragma once
 
 #include <stdint.h>
-#include <avr/common.h>
 
 template<uint8_t alphaFracBits, typename TMul, typename TVal>
 TVal expSmoothImpl(TVal cur, TVal prev, uint8_t alpha, uint8_t oneMinusAlpha)

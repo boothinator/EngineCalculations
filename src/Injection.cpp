@@ -19,16 +19,7 @@
 
 #include <math.h>
 
-#include <Arduino.h>
-
-namespace
-{
-
-float injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder = 0.0;
-
-} // namespace
-
-void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin, int cylindersPerAirflowSensor, float fuelDensityGramPerCc)
+InjectionLengthCalculator::InjectionLengthCalculator(float ticksPerSecond, float injectorFlowCcPerMin, int cylindersPerAirflowSensor, float fuelDensityGramPerCc)
 {
   // Injection length formula:
   //   air quantity per intake stroke = (airflow g/s) * (seconds / tick) * (crank speed ticks / degree) * 180 degrees
@@ -37,7 +28,7 @@ void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlo
   //   injection amount cc = injection g * (1 / [fuel density g/cc])
   //   injLengthTicks = injection amount cc * (1 / [injectorFlow cc/min] ) * (60 s / min) * (crank speed ticks / second)
 
-  injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder = /* seconds degrees ticks/[g stroke cylinder] */
+  _injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder = /* seconds degrees ticks/[g stroke cylinder] */
     ( 1.0 / injectorFlowCcPerMin )
     * 60.0 / 1.0 /* seconds / minute */
     * 180.0 / 1.0 /* degrees / intake stroke */
@@ -45,18 +36,19 @@ void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlo
     * ( 1.0 / fuelDensityGramPerCc );
 }
 
-bool isInjectionLengthConfigured()
-{
-  return injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder > 0.0;
-}
-
-float calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
+float InjectionLengthCalculator::calculate(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
 {
   float injLengthTicks =
     airflowGramsPerSecond
     * inverseCrankSpeedTicksPerDegree
     * targetFuelAirRatio
-    * injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder;  /* seconds degrees ticks/[g stroke] */
+    * _injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder;  /* seconds degrees ticks/[g stroke] */
 
   return injLengthTicks;
+}
+
+
+float InjectionLengthCalculator::operator() (float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond)
+{
+  return calculate(targetFuelAirRatio, inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
 }

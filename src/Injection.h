@@ -19,11 +19,17 @@
 
 #pragma once
 
-void configureInjectionLengthCalculation(float ticksPerSecond, float injectorFlowCcPerMin,
-  int cylindersPerAirflowSensor, float fuelDensityGramPerCc = 0.755);
+class InjectionLengthCalculator
+{
+public:
+  InjectionLengthCalculator(float ticksPerSecond, float injectorFlowCcPerMin,
+    int cylindersPerAirflowSensor, float fuelDensityGramPerCc = 0.755);
 
-bool isInjectionLengthConfigured();
+  float calculate(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+  float operator() (float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
 
-float calculateInjectionLengthTicks(float targetFuelAirRatio, float inverseCrankSpeedTicksPerDegree, float airflowGramsPerSecond);
+private:
+  float _injectionLengthMultiplierSecDegTicksPerGramStrokeCylinder;
+};
 
 #endif

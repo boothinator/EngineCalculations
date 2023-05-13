@@ -19,11 +19,16 @@
 
 #pragma once
 
-void configureEngineSpeedCalculations(float ticksPerSecond);
+class RpmCalculator {
+public:
+  RpmCalculator(float ticksPerSecond);
 
-bool isEngineSpeedConfigured();
+  float calculate(float crankSpeedDegreesPerTick);
+  float operator() (float crankSpeedDegreesPerTick);
 
-float calculateRpm(float crankSpeedDegreesPerTick);
+private:
+  float _calculateRpmMultiplierRevTicksPerDegreeMinute = 0.0;
+};
 
 template<typename angle_t, typename ticks_t>
 ticks_t getTicksFromAngle(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,

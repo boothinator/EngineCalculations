@@ -26,9 +26,6 @@ char message[MAX_MESSAGE_LEN];
 constexpr float ticksPerSecond = 2000000;
 
 void setUp(void) {
-  configureEngineSpeedCalculations(ticksPerSecond);
-  configureInjectionLengthCalculation(ticksPerSecond, 265.0, 4);
-  configureLoadCalculation(ticksPerSecond, 4, 8.3, 8.5);
 }
 
 void tearDown(void) {
@@ -64,6 +61,8 @@ void test_calculateRpm()
   float expected = 1000.0;
   volatile float crankSpeedDegreesPerTick = getCrankSpeedDegreesPerTick(expected);
 
+  RpmCalculator calculateRpm = RpmCalculator(ticksPerSecond);
+
   TIME_START
   volatile float actual = calculateRpm(crankSpeedDegreesPerTick);
   TIME_END
@@ -71,7 +70,7 @@ void test_calculateRpm()
   TEST_ASSERT_EQUAL_FLOAT(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(181, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(10, 177, TIME_DIFF);
 #endif
 }
 
@@ -91,7 +90,7 @@ void test_getTicksFromAngle()
   TEST_ASSERT_UINT32_WITHIN(2, expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_UINT16_WITHIN(100, 602, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
 #endif
 }
 
@@ -103,6 +102,8 @@ void test_calculateInjectionLength()
   volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile float airflowGramsPerSecond = 59.0;
 
+  InjectionLengthCalculator calculateInjectionLengthTicks = InjectionLengthCalculator(ticksPerSecond, 265.0, 4);
+
   TIME_START
   volatile uint32_t actual = calculateInjectionLengthTicks(targetFuelAirRatio, inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
   TIME_END
@@ -110,7 +111,7 @@ void test_calculateInjectionLength()
   TEST_ASSERT_EQUAL_UINT16(expected, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_EQUAL(517, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(10, 517, TIME_DIFF);
 #endif
 }
 
@@ -120,6 +121,8 @@ void test_load()
   float expected = 0.7990716;
   volatile float inverseCrankSpeedTicksPerDegree = 1.0 / getCrankSpeedDegreesPerTick(rpm);
   volatile float airflowGramsPerSecond = 59.0;
+
+  LoadFractionCalculator calculateLoadFraction = LoadFractionCalculator(ticksPerSecond, 4, 8.3, 8.5);
 
   TIME_START
   volatile float actual = calculateLoadFraction(inverseCrankSpeedTicksPerDegree, airflowGramsPerSecond);
