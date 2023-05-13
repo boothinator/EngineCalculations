@@ -36,6 +36,8 @@ bool inAscendingOrder(ArrayT arr, size_t length)
     {
       return false;
     }
+
+    prev = cur;
   }
 
   return true;
