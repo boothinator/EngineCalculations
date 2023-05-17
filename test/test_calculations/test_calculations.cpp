@@ -165,6 +165,16 @@ void test_expSmooth()
   test_expSmooth<26>(cur, prev, 0.3, 127);
 }
 
+void test_inAscendingOrder()
+{
+  uint16_t advanceRpmArr[] = {
+    700,  950,  1200, 1500, 2000, 2600, 3100, 3700, 4300, 4900, 5000, 6000, 6500, 7000, 7200, 7500};
+
+  size_t len = sizeof(advanceRpmArr) / sizeof(advanceRpmArr[0]);
+
+  TEST_ASSERT_TRUE(inAscendingOrder(advanceRpmArr, len));
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
@@ -184,6 +194,7 @@ void setup() {
   RUN_TEST(test_calculateInjectionLength);
   RUN_TEST(test_load);
   RUN_TEST(test_expSmooth);
+  RUN_TEST(test_inAscendingOrder);
 
   UNITY_END(); // stop unit testing
 }
