@@ -175,6 +175,16 @@ void test_inAscendingOrder()
   TEST_ASSERT_TRUE(inAscendingOrder(advanceRpmArr, len));
 }
 
+void test_inAscendingOrder_False()
+{
+  uint16_t advanceRpmArr[] = {
+    700,  950,  1200, 2000, 1500, 2600, 3100, 3700, 4300, 4900, 5000, 6000, 6500, 7000, 7200, 7500};
+
+  size_t len = sizeof(advanceRpmArr) / sizeof(advanceRpmArr[0]);
+
+  TEST_ASSERT_FALSE(inAscendingOrder(advanceRpmArr, len));
+}
+
 void setup() {
   // NOTE!!! Wait for >2 secs
   // if board doesn't support software reset via Serial.DTR/RTS
