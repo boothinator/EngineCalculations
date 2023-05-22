@@ -94,6 +94,66 @@ void test_getTicksFromAngle()
 #endif
 }
 
+void test_getAngle()
+{
+  volatile uint32_t lastCrankEventTicks = 13338414ul;
+  uint32_t ticks = 3333ul + lastCrankEventTicks; // 333.333 ticks/degree
+  float rpm = 1000.0; 
+  volatile float crankSpeedTicksPerDegree = getCrankSpeedDegreesPerTick(rpm);
+  volatile float lastCrankEventAngle = 25.0;
+  volatile float expectedAngle = 35.0;
+
+  TIME_START
+  volatile float actual = getAngle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedTicksPerDegree, ticks);
+  TIME_END
+
+  TEST_ASSERT_FLOAT_WITHIN(0.001, expectedAngle, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
+#endif
+}
+
+void test_getAngleInPast()
+{
+  volatile uint32_t lastCrankEventTicks = 13338414ul;
+  uint32_t ticks = lastCrankEventTicks - 3333ul; // 333.333 ticks/degree
+  float rpm = 1000.0; 
+  volatile float crankSpeedTicksPerDegree = getCrankSpeedDegreesPerTick(rpm);
+  volatile float lastCrankEventAngle = 385.0;
+  volatile float expectedAngle = 375.0;
+
+  TIME_START
+  volatile float actual = getAngleInPast(lastCrankEventAngle, lastCrankEventTicks, crankSpeedTicksPerDegree, ticks);
+  TIME_END
+
+  TEST_ASSERT_FLOAT_WITHIN(0.002, expectedAngle, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
+#endif
+}
+
+void test_getAngleInPastHalfCycle()
+{
+  volatile uint32_t lastCrankEventTicks = 13338414ul;
+  uint32_t ticks = lastCrankEventTicks - 3333ul; // 333.333 ticks/degree
+  float rpm = 1000.0; 
+  volatile float crankSpeedTicksPerDegree = getCrankSpeedDegreesPerTick(rpm);
+  volatile float lastCrankEventAngle = 385.0;
+  volatile float expectedAngle = 15.0;
+
+  TIME_START
+  volatile float actual = getAngleInPastHalfCycle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedTicksPerDegree, ticks);
+  TIME_END
+
+  TEST_ASSERT_FLOAT_WITHIN(0.002, expectedAngle, actual);
+
+#ifdef __AVR_ATmega2560__
+  TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
+#endif
+}
+
 void test_calculateInjectionLength()
 {
   uint32_t expected = 18054;
@@ -201,6 +261,9 @@ void setup() {
 
   RUN_TEST(test_calculateRpm);
   RUN_TEST(test_getTicksFromAngle);
+  RUN_TEST(test_getAngle);
+  RUN_TEST(test_getAngleInPast);
+  RUN_TEST(test_getAngleInPastHalfCycle);
   RUN_TEST(test_calculateInjectionLength);
   RUN_TEST(test_load);
   RUN_TEST(test_expSmooth);

@@ -107,7 +107,7 @@ angle_t getAngleInPast(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
 
   while (angle >= cycleAngle)
   {
-    angle += cycleAngle;
+    angle -= cycleAngle;
   }
 
   return angle;
