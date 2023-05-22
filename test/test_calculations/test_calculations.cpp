@@ -134,14 +134,10 @@ void test_getAngleInPast()
 #endif
 }
 
-void test_getAngleInPastHalfCycle()
+void test_getAngleInPastHalfCycle(volatile uint32_t lastCrankEventTicks, uint32_t ticks, float rpm,
+  volatile float lastCrankEventAngle, volatile float expectedAngle)
 {
-  volatile uint32_t lastCrankEventTicks = 13338414ul;
-  uint32_t ticks = lastCrankEventTicks - 3333ul; // 333.333 ticks/degree
-  float rpm = 1000.0; 
   volatile float crankSpeedTicksPerDegree = getCrankSpeedDegreesPerTick(rpm);
-  volatile float lastCrankEventAngle = 385.0;
-  volatile float expectedAngle = 15.0;
 
   TIME_START
   volatile float actual = getAngleInPastHalfCycle(lastCrankEventAngle, lastCrankEventTicks, crankSpeedTicksPerDegree, ticks);
@@ -152,6 +148,13 @@ void test_getAngleInPastHalfCycle()
 #ifdef __AVR_ATmega2560__
   TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
 #endif
+}
+
+void test_getAngleInPastHalfCycle()
+{
+  test_getAngleInPastHalfCycle(12680991, 11915131, 100.0, 282.0, 52.242);
+  test_getAngleInPastHalfCycle(13247059, 13080567, 103.0, 462.0, 50.55397);
+  test_getAngleInPastHalfCycle(13846427, 13080567, 102.0, 642.0, 47.64682);
 }
 
 void test_calculateInjectionLength()
