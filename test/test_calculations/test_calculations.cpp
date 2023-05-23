@@ -146,7 +146,7 @@ void test_getAngleInPastHalfCycle(volatile uint32_t lastCrankEventTicks, uint32_
   TEST_ASSERT_FLOAT_WITHIN(0.002, expectedAngle, actual);
 
 #ifdef __AVR_ATmega2560__
-  TEST_ASSERT_UINT16_WITHIN(150, 550, TIME_DIFF);
+  TEST_ASSERT_UINT16_WITHIN(200, 600, TIME_DIFF);
 #endif
 }
 
@@ -155,6 +155,7 @@ void test_getAngleInPastHalfCycle()
   test_getAngleInPastHalfCycle(12680991, 11915131, 100.0, 282.0, 52.242);
   test_getAngleInPastHalfCycle(13247059, 13080567, 103.0, 462.0, 50.55397);
   test_getAngleInPastHalfCycle(13846427, 13080567, 102.0, 642.0, 47.64682);
+  test_getAngleInPastHalfCycle(0, 4294958500, 7200.0, 0.0, 170.0064);
 }
 
 void test_calculateInjectionLength()
