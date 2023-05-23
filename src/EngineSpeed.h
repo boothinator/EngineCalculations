@@ -103,28 +103,19 @@ angle_t getAngleInPast(angle_t lastCrankEventAngle, ticks_t lastCrankEventTicks,
 
   angle_t angleBeforeLastCrankEvent = static_cast<angle_t>(crankSpeedDegreesPerTick * ticksDiff);
 
-  if (lastCrankEventAngle > angleBeforeLastCrankEvent)
+  while (lastCrankEventAngle < angleBeforeLastCrankEvent)
   {
-    angle_t angle = lastCrankEventAngle - angleBeforeLastCrankEvent;
-
-    while (angle >= cycleAngle)
-    {
-      angle -= cycleAngle;
-    }
-
-    return angle;
+    lastCrankEventAngle += cycleAngle;
   }
-  else
+
+  angle_t angle = lastCrankEventAngle - angleBeforeLastCrankEvent;
+
+  while (angle >= cycleAngle)
   {
-    angle_t angle = lastCrankEventAngle - angleBeforeLastCrankEvent;
-
-    while (angle >= cycleAngle || angle < 0)
-    {
-      angle += cycleAngle;
-    }
-
-    return angle;
+    angle -= cycleAngle;
   }
+
+  return angle;
 }
 
 template<typename angle_t, typename ticks_t>
