@@ -156,6 +156,7 @@ void test_getAngleInPastHalfCycle()
   test_getAngleInPastHalfCycle(13247059, 13080567, 103.0, 462.0, 50.55397);
   test_getAngleInPastHalfCycle(13846427, 13080567, 102.0, 642.0, 47.64682);
   test_getAngleInPastHalfCycle(0, 4294958500, 7200.0, 0.0, 170.0064);
+  test_getAngleInPastHalfCycle(0, 4294941833, 7200.0, 0.0, 169.9992);
 }
 
 void test_calculateInjectionLength()
